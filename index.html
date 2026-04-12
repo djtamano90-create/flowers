@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>פריחה — גלה את הפרח שלך</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Heebo:wght@300;400;500;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --cream:#faf6f0;--rose:#c9697a;--sage:#7a9e7e;
+  --charcoal:#2c2c2c;--shadow:rgba(44,44,44,0.14);
+}
+body{font-family:'Heebo',sans-serif;background:var(--cream);color:var(--charcoal);min-height:100vh;overflow-x:hidden}
+
+/* ── NAV ── */
+nav{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:1.1rem 2rem;position:fixed;top:0;left:0;right:0;z-index:100;
+  background:rgba(250,246,240,0.94);backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(201,105,122,0.15);
+}
+.logo{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--rose);cursor:pointer}
+.logo span{font-style:italic}
+.nav-btn{
+  background:var(--rose);color:#fff;border:none;
+  padding:.5rem 1.3rem;border-radius:50px;
+  font-family:'Heebo',sans-serif;font-size:.88rem;font-weight:500;
+  cursor:pointer;transition:background .2s,transform .15s;
+}
+.nav-btn:hover{background:#b05568;transform:scale(1.04)}
+
+/* ── VIEWS ── */
+/* All views hidden by default; JS adds .active to show */
+.page{display:none;min-height:100vh;padding-top:70px}
+.page.active{display:block}
+
+/* Hero needs flex layout when active */
+#page-hero.active{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-height:100vh;padding:80px 1.5rem 3rem;text-align:center;
+}
+/* Background decoration — pointer-events:none so buttons work */
+#page-hero .bg-deco{
+  position:absolute;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 80%,rgba(242,196,176,.38) 0,transparent 70%),
+    radial-gradient(ellipse 50% 40% at 80% 20%,rgba(122,158,126,.22) 0,transparent 70%);
+}
+#page-hero{position:relative}
+#page-hero>*{position:relative;z-index:1}
+
+.hero-tag{font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--rose);margin-bottom:.9rem;font-weight:500}
+.hero-h1{font-family:'Playfair Display',serif;font-size:clamp(2.2rem,6vw,4rem);line-height:1.15;margin-bottom:1.1rem;max-width:680px}
+.hero-h1 em{color:var(--rose);font-style:italic}
+.hero-p{font-size:1rem;font-weight:300;color:#666;max-width:400px;line-height:1.7;margin-bottom:2.5rem}
+.hero-btns{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center}
+
+/* Shared button styles */
+.btn{
+  border:none;border-radius:50px;font-family:'Heebo',sans-serif;font-size:.97rem;
+  font-weight:500;cursor:pointer;padding:.85rem 2.1rem;transition:all .2s;
+}
+.btn-rose{background:var(--rose);color:#fff;box-shadow:0 4px 18px rgba(201,105,122,.32)}
+.btn-rose:hover{background:#b05568;transform:translateY(-2px);box-shadow:0 6px 22px rgba(201,105,122,.4)}
+.btn-outline{background:transparent;color:var(--charcoal);border:1.5px solid rgba(44,44,44,.25)}
+.btn-outline:hover{border-color:var(--rose);color:var(--rose);transform:translateY(-2px)}
+.btn-dark{background:var(--charcoal);color:#fff;box-shadow:0 4px 16px rgba(44,44,44,.2)}
+.btn-dark:hover{background:#444;transform:translateY(-2px)}
+
+/* ── SWIPE PAGE ── */
+#page-swipe.active{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-height:100vh;padding:80px 1rem 2rem;
+}
+.swipe-title{font-family:'Playfair Display',serif;font-size:clamp(1.7rem,4vw,2.5rem);text-align:center;margin-bottom:.3rem}
+.swipe-title em{color:var(--rose);font-style:italic}
+.swipe-sub{color:#999;font-weight:300;font-size:.88rem;text-align:center;margin-bottom:.8rem}
+.swipe-prog{font-size:.78rem;color:#bbb;margin-bottom:1.3rem;font-weight:300}
+
+/* Card stack */
+.card-stack{
+  position:relative;width:300px;height:430px;
+  margin:0 auto;touch-action:none;user-select:none;
+}
+.fcard{
+  position:absolute;inset:0;border-radius:22px;overflow:hidden;
+  box-shadow:0 14px 44px var(--shadow);cursor:grab;background:#fff;
+  transform-origin:bottom center;will-change:transform;
+}
+.fcard:active{cursor:grabbing}
+.fcard img{width:100%;height:71%;object-fit:cover;display:block;pointer-events:none;-webkit-user-drag:none}
+.fcard-body{padding:.85rem 1.1rem}
+.fcard-name{font-family:'Playfair Display',serif;font-size:1.15rem}
+.fcard-desc{font-size:.78rem;color:#aaa;margin-top:.15rem;font-weight:300}
+.fcard-price{font-size:.88rem;color:var(--rose);font-weight:500;margin-top:.25rem}
+
+/* Stack visual offset for cards 2 & 3 */
+.fcard.behind1{z-index:2;transform:rotate(-2.5deg) scale(.96) translateY(10px)}
+.fcard.behind2{z-index:1;transform:rotate(2.5deg) scale(.92) translateY(20px)}
+.fcard.top{z-index:3}
+
+/* Overlays */
+.ov{position:absolute;inset:0;border-radius:22px;opacity:0;pointer-events:none;display:flex;align-items:center;justify-content:center;font-size:5rem;z-index:10}
+.ov-like{background:rgba(122,158,126,.18)}
+.ov-nope{background:rgba(201,105,122,.18);color:var(--rose);font-size:4rem;font-weight:900}
+
+/* Swipe buttons row */
+.swipe-row{display:flex;gap:2rem;justify-content:center;align-items:center;margin-top:1.8rem}
+.swipe-btn{
+  width:62px;height:62px;border-radius:50%;border:none;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:1.5rem;
+  box-shadow:0 4px 16px var(--shadow);background:#fff;
+  transition:transform .15s,box-shadow .15s;
+}
+.swipe-btn.like{background:var(--sage);color:#fff;width:74px;height:74px;font-size:2rem}
+.swipe-btn:hover{transform:scale(1.13);box-shadow:0 7px 24px var(--shadow)}
+.swipe-hint{font-size:.72rem;color:#ccc;margin-top:.9rem;text-align:center}
+
+/* Floating animation */
+#float-layer{position:fixed;inset:0;pointer-events:none;z-index:9999;display:flex;align-items:center;justify-content:center}
+#float-icon{font-size:9rem;opacity:0}
+#float-icon.pop{animation:fPop .65s ease forwards}
+@keyframes fPop{
+  0%  {opacity:0;transform:scale(.3) translateY(0)}
+  30% {opacity:1;transform:scale(1.4) translateY(-15px)}
+  60% {opacity:1;transform:scale(1)   translateY(-45px)}
+  100%{opacity:0;transform:scale(.8)  translateY(-110px)}
+}
+
+/* ── RESULTS PAGE ── */
+#page-results{padding:80px 1.5rem 3rem}
+.res-inner{max-width:900px;margin:0 auto}
+.res-header{text-align:center;margin-bottom:2.5rem}
+.res-badge{display:inline-block;background:rgba(122,158,126,.15);color:var(--sage);font-size:.72rem;font-weight:500;padding:.27rem .8rem;border-radius:50px;margin-bottom:.7rem;letter-spacing:.06em}
+.res-h2{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4vw,2.6rem);margin-bottom:.5rem}
+.res-h2 em{color:var(--rose);font-style:italic}
+.res-sub{color:#888;font-weight:300;font-size:.93rem}
+.sec-label{font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--rose);margin-bottom:.5rem;font-weight:500}
+.res-sec{margin-bottom:2.5rem}
+.res-sec h3{font-family:'Playfair Display',serif;font-size:1.2rem;margin-bottom:1rem}
+.flower-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:1rem}
+.ftile{border-radius:16px;overflow:hidden;background:#fff;box-shadow:0 4px 16px var(--shadow);cursor:pointer;transition:transform .2s,box-shadow .2s}
+.ftile:hover{transform:translateY(-4px);box-shadow:0 9px 28px var(--shadow)}
+.ftile img{width:100%;height:130px;object-fit:cover;display:block}
+.ftile-info{padding:.6rem .85rem}
+.ftile-info h4{font-family:'Playfair Display',serif;font-size:.9rem}
+.ftile-info span{font-size:.76rem;color:var(--rose);font-weight:500}
+.res-actions{display:flex;gap:.8rem;flex-wrap:wrap;justify-content:center;padding:1.2rem 0 2rem}
+
+/* ── CATALOG PAGE ── */
+#page-catalog{padding:80px 1.5rem 3rem}
+.cat-inner{max-width:1100px;margin:0 auto}
+.back-btn{display:inline-flex;align-items:center;gap:.4rem;background:transparent;border:1.5px solid rgba(44,44,44,.2);color:var(--charcoal);padding:.48rem 1.1rem;border-radius:50px;font-family:'Heebo',sans-serif;font-size:.84rem;cursor:pointer;transition:all .15s;margin-bottom:1.5rem}
+.back-btn:hover{border-color:var(--rose);color:var(--rose)}
+.cat-header{text-align:center;margin-bottom:1.5rem}
+.cat-h2{font-family:'Playfair Display',serif;font-size:clamp(1.7rem,4vw,2.5rem);margin-bottom:.4rem}
+.cat-p{color:#888;font-weight:300;font-size:.93rem}
+.cat-filters{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center;margin-bottom:1.5rem}
+.fbtn{padding:.36rem .9rem;border-radius:50px;border:1.5px solid rgba(44,44,44,.18);background:transparent;font-family:'Heebo',sans-serif;font-size:.79rem;cursor:pointer;transition:all .15s;color:#666}
+.fbtn:hover,.fbtn.on{background:var(--rose);border-color:var(--rose);color:#fff}
+.cat-count{text-align:center;font-size:.8rem;color:#bbb;margin-bottom:1.2rem}
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:1.1rem}
+
+/* ── CARD FLIP ── */
+.ftile{
+  border-radius:16px;background:transparent;
+  box-shadow:none;cursor:pointer;
+  perspective:900px;position:relative;
+}
+.ftile-inner{
+  position:relative;width:100%;
+  transform-style:preserve-3d;
+  transition:transform .55s cubic-bezier(.4,0,.2,1);
+  border-radius:16px;
+  box-shadow:0 4px 16px var(--shadow);
+}
+.ftile.flipped .ftile-inner{ transform:rotateY(180deg) }
+.ftile-front,.ftile-back{
+  border-radius:16px;overflow:hidden;
+  backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  background:#fff;
+}
+.ftile-front{ position:relative }
+.ftile-back{
+  position:absolute;inset:0;
+  transform:rotateY(180deg);
+  display:flex;flex-direction:column;justify-content:center;
+  padding:1rem 1.1rem;
+  background:linear-gradient(145deg,#fff9f4,#fff);
+  text-align:right;
+}
+.ftile-front img{width:100%;height:130px;object-fit:cover;display:block}
+.ftile-info{padding:.6rem .85rem}
+.ftile-info h4{font-family:'Playfair Display',serif;font-size:.9rem}
+.ftile-info span{font-size:.76rem;color:var(--rose);font-weight:500}
+.flip-name{font-family:'Playfair Display',serif;font-size:1rem;margin-bottom:.3rem;color:var(--charcoal)}
+.flip-emoji{font-size:1.8rem;margin-bottom:.4rem;display:block}
+.flip-price{font-size:.85rem;color:var(--rose);font-weight:600;margin-bottom:.55rem}
+.flip-tags{display:flex;flex-wrap:wrap;gap:.28rem;margin-bottom:.6rem}
+.flip-tag{font-size:.65rem;background:rgba(201,105,122,.1);color:var(--rose);padding:.16rem .5rem;border-radius:50px}
+.flip-desc-long{font-size:.78rem;color:#777;font-weight:300;line-height:1.55;margin-bottom:.5rem}
+.flip-hint{font-size:.62rem;color:#ccc;font-style:italic;margin-top:auto;text-align:center}
+/* hold-ring progress */
+.hold-ring{
+  position:absolute;inset:-3px;border-radius:19px;pointer-events:none;z-index:5;
+  opacity:0;transition:opacity .1s;
+  background:conic-gradient(var(--rose) var(--p,0%), rgba(201,105,122,.15) var(--p,0%));
+  mask:radial-gradient(farthest-side,transparent calc(100% - 4px),#000 calc(100% - 4px));
+  -webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 4px),#000 calc(100% - 4px));
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo" onclick="goTo('page-hero')">פ<span>ריחה</span></div>
+  <button class="nav-btn" onclick="goTo('page-swipe')">התחל להתאים ✦</button>
+</nav>
+
+<!-- Float anim layer -->
+<div id="float-layer"><span id="float-icon"></span></div>
+
+<!-- ════════════════ HERO ════════════════ -->
+<div id="page-hero" class="page active">
+  <div class="bg-deco"></div>
+  <p class="hero-tag">חנות פרחים חכמה</p>
+  <h1 class="hero-h1">גלה את הפרח <em>שמתאים בדיוק לך</em></h1>
+  <p class="hero-p">החלק ימינה לאהוב, שמאלה לדחות — ואנחנו נבנה לך קטלוג אישי מושלם.</p>
+  <div class="hero-btns">
+    <button class="btn btn-rose" onclick="goTo('page-swipe')">💐 התחל להחליק</button>
+    <button class="btn btn-outline" onclick="goTo('page-catalog')">📖 קטלוג מלא</button>
+  </div>
+</div>
+
+<!-- ════════════════ SWIPE ════════════════ -->
+<div id="page-swipe" class="page">
+  <h1 class="swipe-title">אהבת או <em>לא?</em></h1>
+  <p class="swipe-sub">♥ גרור ימינה לאהוב &nbsp;·&nbsp; ✕ גרור שמאלה לדחות</p>
+  <p class="swipe-prog" id="swipe-prog"></p>
+  <div class="card-stack" id="card-stack"></div>
+  <div class="swipe-row">
+    <button class="swipe-btn" id="btn-nope" title="לא אהבתי">✕</button>
+    <button class="swipe-btn like" id="btn-like" title="אהבתי">♥</button>
+  </div>
+  <p class="swipe-hint">או לחץ על הלחצנים</p>
+</div>
+
+<!-- ════════════════ RESULTS ════════════════ -->
+<div id="page-results" class="page">
+  <div class="res-inner">
+    <div class="res-header">
+      <div class="res-badge">✦ התאמה אישית</div>
+      <h2 class="res-h2">הקטלוג <em>שנבנה בשבילך</em></h2>
+      <p class="res-sub" id="res-subtitle"></p>
+    </div>
+    <div class="res-sec">
+      <p class="sec-label">בחרת ❤️</p>
+      <h3>הפרחים שאהבת</h3>
+      <p style="font-size:.73rem;color:#bbb;margin-bottom:.8rem;font-weight:300">לחיצה ארוכה על פרח לפרטים נוספים 🔍</p>
+      <div class="flower-grid" id="liked-grid"></div>
+    </div>
+    <div class="res-sec">
+      <p class="sec-label">מומלץ עבורך ✦</p>
+      <h3>פרחים שכנראה תאהב</h3>
+      <p style="font-size:.73rem;color:#bbb;margin-bottom:.8rem;font-weight:300">לחיצה ארוכה על פרח לפרטים נוספים 🔍</p>
+      <div class="flower-grid" id="recs-grid"></div>
+    </div>
+    <div class="res-actions">
+      <button class="btn btn-dark" onclick="goTo('page-catalog')">📖 לקטלוג המלא (50+ פרחים)</button>
+      <button class="btn btn-rose" onclick="restartSwipe()">🔄 החלק שוב</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════ CATALOG ════════════════ -->
+<div id="page-catalog" class="page">
+  <div class="cat-inner">
+    <button class="back-btn" onclick="goBack()">← חזור</button>
+    <div class="cat-header">
+      <p class="sec-label">הקטלוג המלא</p>
+      <h2 class="cat-h2">כל הפרחים שלנו</h2>
+      <p class="cat-p">52 זנים — תמיד טריים, משלוח מהיר</p>
+    </div>
+    <div class="cat-filters" id="cat-filters"></div>
+    <p class="cat-count" id="cat-count"></p>
+    <p style="font-size:.73rem;color:#bbb;margin-bottom:.8rem;font-weight:300;text-align:center">לחיצה ארוכה על פרח לפרטים נוספים 🔍</p>
+    <div class="cat-grid" id="cat-grid"></div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════
+   DATA
+═══════════════════════════════════════════ */
+const SWIPE_DECK = [
+  {name:"ורד אדום קלאסי",   desc:"רומנטי ועוצמתי",   price:"₪49 לזר", emoji:"🌹", tags:["romantic","classic","red","fragrant"],   img:"https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=400&q=80"},
+  {name:"שושנה לבנה",       desc:"טהורה ועדינה",     price:"₪39 לזר", emoji:"🤍", tags:["delicate","classic","white","elegant"],   img:"https://images.unsplash.com/photo-1490750967868-88df5691cc9f?w=400&q=80"},
+  {name:"חמנייה",            desc:"שמחה ואנרגטית",   price:"₪29 לזר", emoji:"🌻", tags:["cheerful","bright","yellow","bold"],      img:"https://images.unsplash.com/photo-1471194402529-8e0f5cf8f08c?w=400&q=80"},
+  {name:"לבנדר",             desc:"מרגיע ומריח",     price:"₪35 לזר", emoji:"💜", tags:["fragrant","delicate","purple","calming"], img:"https://images.unsplash.com/photo-1533038590840-1cde6e668a91?w=400&q=80"},
+  {name:"אורכידאה סגולה",   desc:"יוקרתית ומיוחדת", price:"₪89 לזר", emoji:"🌸", tags:["elegant","exotic","purple","luxury"],     img:"https://images.unsplash.com/photo-1566737236500-c8ac43014a67?w=400&q=80"},
+  {name:"צבעוני",            desc:"צבעוני ועליז",    price:"₪25 לזר", emoji:"🌷", tags:["cheerful","bright","colorful","bold"],    img:"https://images.unsplash.com/photo-1462275646964-a0e3386b89fa?w=400&q=80"},
+  {name:"דהליה סגולה",      desc:"מרשים ומגוון",    price:"₪55 לזר", emoji:"🌺", tags:["bold","colorful","exotic","dramatic"],    img:"https://images.unsplash.com/photo-1508610048659-a06b669e3321?w=400&q=80"},
+  {name:"פאוניה ורודה",     desc:"רכה ורומנטית",    price:"₪65 לזר", emoji:"🌸", tags:["romantic","delicate","pink","elegant"],   img:"https://images.unsplash.com/photo-1587530207272-c9b3c6d6f66e?w=400&q=80"},
+  {name:"מרגנית לבנה",      desc:"קלילה וחיננית",   price:"₪22 לזר", emoji:"🌼", tags:["delicate","white","cheerful","classic"],  img:"https://images.unsplash.com/photo-1455659817273-f96807779a8a?w=400&q=80"},
+  {name:"ליליום כתום",      desc:"גדול ומרשים",     price:"₪59 לזר", emoji:"🧡", tags:["bold","orange","fragrant","dramatic"],    img:"https://images.unsplash.com/photo-1444930694458-01babf71870c?w=400&q=80"},
+];
+
+const CATALOG = [
+  {name:"ורד ורוד",          desc:"עדין ורומנטי",     price:"₪45 לזר", emoji:"🌹", tags:["romantic","pink","classic","fragrant"],         img:"https://images.unsplash.com/photo-1490750967868-88df5691cc9f?w=300&q=75"},
+  {name:"ורד לבן",           desc:"נקי ואלגנטי",      price:"₪48 לזר", emoji:"🤍", tags:["romantic","white","classic","elegant"],          img:"https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=300&q=75"},
+  {name:"ורד שמנת",          desc:"רך ומושקע",        price:"₪52 לזר", emoji:"🌸", tags:["romantic","white","elegant","fragrant"],         img:"https://images.unsplash.com/photo-1587530207272-c9b3c6d6f66e?w=300&q=75"},
+  {name:"ורד כתום",          desc:"נלהב ואנרגטי",     price:"₪46 לזר", emoji:"🧡", tags:["bold","orange","classic","cheerful"],            img:"https://images.unsplash.com/photo-1444930694458-01babf71870c?w=300&q=75"},
+  {name:"ורד צהוב",          desc:"ידידותי ואופטימי", price:"₪44 לזר", emoji:"🌼", tags:["cheerful","yellow","classic","bright"],          img:"https://images.unsplash.com/photo-1462275646964-a0e3386b89fa?w=300&q=75"},
+  {name:"פאוניה לבנה",      desc:"שלווה ומרשימה",    price:"₪70 לזר", emoji:"🤍", tags:["elegant","white","delicate","fragrant","luxury"],img:"https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?w=300&q=75"},
+  {name:"פאוניה אדומה",     desc:"סוערת ועוצמתית",   price:"₪72 לזר", emoji:"🌺", tags:["romantic","red","bold","fragrant","luxury"],     img:"https://images.unsplash.com/photo-1548094990-c16ca90f1f0d?w=300&q=75"},
+  {name:"אמריליס אדום",     desc:"דרמטי ועוצמתי",    price:"₪75 לזר", emoji:"🌹", tags:["dramatic","bold","red","romantic","luxury"],     img:"https://images.unsplash.com/photo-1533038590840-1cde6e668a91?w=300&q=75"},
+  {name:"יסמין לבן",        desc:"ניחוח שמימי",       price:"₪55 לזר", emoji:"🤍", tags:["fragrant","delicate","white","calming","elegant"],img:"https://images.unsplash.com/photo-1508610048659-a06b669e3321?w=300&q=75"},
+  {name:"ורד סגול",         desc:"מסתורי ומיוחד",    price:"₪59 לזר", emoji:"💜", tags:["exotic","purple","elegant","dramatic"],          img:"https://images.unsplash.com/photo-1566737236500-c8ac43014a67?w=300&q=75"},
+  {name:"אירוס סגול",       desc:"ייחודי ומרהיב",    price:"₪42 לזר", emoji:"💜", tags:["exotic","purple","elegant","dramatic"],          img:"https://images.unsplash.com/photo-1533038590840-1cde6e668a91?w=300&q=75"},
+  {name:"שושן הבקעות",      desc:"ניחוח קלאסי",       price:"₪38 לזר", emoji:"🤍", tags:["fragrant","white","delicate","classic"],         img:"https://images.unsplash.com/photo-1490750967868-88df5691cc9f?w=300&q=75"},
+  {name:"אגפנתוס כחול",     desc:"כחול ועמוק",        price:"₪60 לזר", emoji:"💙", tags:["exotic","purple","bold","dramatic"],             img:"https://images.unsplash.com/photo-1462275646964-a0e3386b89fa?w=300&q=75"},
+  {name:"לוונדר אנגלי",     desc:"ריח שדות",          price:"₪33 לזר", emoji:"💜", tags:["fragrant","purple","calming","delicate"],        img:"https://images.unsplash.com/photo-1471194402529-8e0f5cf8f08c?w=300&q=75"},
+  {name:"מנטה פרחונית",     desc:"רענן ומרגיע",       price:"₪28 לזר", emoji:"🌿", tags:["calming","delicate","fragrant","white"],         img:"https://images.unsplash.com/photo-1455659817273-f96807779a8a?w=300&q=75"},
+  {name:"חמנייה ענקית",     desc:"נוכחות מלאה",       price:"₪35 לזר", emoji:"🌻", tags:["cheerful","yellow","bold","bright"],             img:"https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=300&q=75"},
+  {name:"זזיניה צבעונית",   desc:"קיץ חגיגי",         price:"₪26 לזר", emoji:"🌺", tags:["cheerful","colorful","bold","bright"],           img:"https://images.unsplash.com/photo-1508610048659-a06b669e3321?w=300&q=75"},
+  {name:"קוסמוס ורוד",      desc:"קל ואוורירי",       price:"₪24 לזר", emoji:"🌸", tags:["delicate","pink","cheerful","bright"],           img:"https://images.unsplash.com/photo-1587530207272-c9b3c6d6f66e?w=300&q=75"},
+  {name:"טגטס כתום",        desc:"חם ומחמם",          price:"₪20 לזר", emoji:"🧡", tags:["cheerful","orange","bold","bright"],             img:"https://images.unsplash.com/photo-1444930694458-01babf71870c?w=300&q=75"},
+  {name:"ורד מיני צהוב",    desc:"מתוק ועליז",        price:"₪30 לזר", emoji:"🌼", tags:["cheerful","yellow","delicate","bright"],         img:"https://images.unsplash.com/photo-1590598016509-bce9e90a3ded?w=300&q=75"},
+  {name:"אורכידאה לבנה",   desc:"פאר ולוקסוס",       price:"₪95 לזר", emoji:"🤍", tags:["luxury","elegant","white","exotic"],             img:"https://images.unsplash.com/photo-1566737236500-c8ac43014a67?w=300&q=75"},
+  {name:"אורכידאה ורודה",  desc:"מעוגן ונדיר",        price:"₪98 לזר", emoji:"🌸", tags:["luxury","elegant","pink","exotic"],              img:"https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?w=300&q=75"},
+  {name:"פרוטאה",           desc:"אקזוטי ועוצמתי",   price:"₪110 לזר",emoji:"🌺", tags:["exotic","dramatic","luxury","bold"],             img:"https://images.unsplash.com/photo-1548094990-c16ca90f1f0d?w=300&q=75"},
+  {name:"הליקוניה",         desc:"טרופי ומרהיב",      price:"₪105 לזר",emoji:"🧡", tags:["exotic","orange","dramatic","luxury"],           img:"https://images.unsplash.com/photo-1533038590840-1cde6e668a91?w=300&q=75"},
+  {name:"ברומליה אדומה",    desc:"מיוחד במינו",       price:"₪88 לזר", emoji:"🌹", tags:["exotic","red","dramatic","luxury"],              img:"https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=300&q=75"},
+  {name:"צבעוני ורוד",      desc:"שמח ומרגש",         price:"₪27 לזר", emoji:"🌷", tags:["cheerful","pink","bright","delicate"],           img:"https://images.unsplash.com/photo-1462275646964-a0e3386b89fa?w=300&q=75"},
+  {name:"ליליום ורוד",      desc:"נשגב ומרשים",       price:"₪65 לזר", emoji:"🌸", tags:["elegant","pink","fragrant","bold"],              img:"https://images.unsplash.com/photo-1455659817273-f96807779a8a?w=300&q=75"},
+  {name:"אסטרומריה ורודה", desc:"ארוך חיים",          price:"₪32 לזר", emoji:"🌸", tags:["delicate","pink","cheerful","elegant"],          img:"https://images.unsplash.com/photo-1587530207272-c9b3c6d6f66e?w=300&q=75"},
+  {name:"קמליה ורודה",      desc:"רשמי ועשיר",        price:"₪78 לזר", emoji:"🌸", tags:["elegant","pink","luxury","classic"],             img:"https://images.unsplash.com/photo-1590598016509-bce9e90a3ded?w=300&q=75"},
+  {name:"פלוקס ורוד",       desc:"קיצי ומשוחרר",      price:"₪23 לזר", emoji:"🌸", tags:["cheerful","pink","bright","delicate"],           img:"https://images.unsplash.com/photo-1508610048659-a06b669e3321?w=300&q=75"},
+  {name:"שושנת המדבר",      desc:"עמיד ויפהפה",       price:"₪44 לזר", emoji:"🤍", tags:["delicate","white","elegant","calming"],          img:"https://images.unsplash.com/photo-1566737236500-c8ac43014a67?w=300&q=75"},
+  {name:"ורד שלג",          desc:"קר ונקי",            price:"₪50 לזר", emoji:"🤍", tags:["elegant","white","classic","fragrant"],          img:"https://images.unsplash.com/photo-1490750967868-88df5691cc9f?w=300&q=75"},
+  {name:"גרדניה",           desc:"ריח עז ויפה",        price:"₪62 לזר", emoji:"🤍", tags:["fragrant","white","elegant","luxury"],           img:"https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?w=300&q=75"},
+  {name:"מגנוליה לבנה",    desc:"עצמאי ומרשים",       price:"₪85 לזר", emoji:"🤍", tags:["luxury","white","dramatic","elegant"],           img:"https://images.unsplash.com/photo-1548094990-c16ca90f1f0d?w=300&q=75"},
+  {name:"ספיראה לבן",       desc:"עדין כשלג",          price:"₪29 לזר", emoji:"🤍", tags:["delicate","white","calming","classic"],          img:"https://images.unsplash.com/photo-1455659817273-f96807779a8a?w=300&q=75"},
+  {name:"פרסיה צהובה",      desc:"בוהק ומחמם",         price:"₪37 לזר", emoji:"🌼", tags:["bright","yellow","cheerful","bold"],             img:"https://images.unsplash.com/photo-1471194402529-8e0f5cf8f08c?w=300&q=75"},
+  {name:"אכילאה צהובה",     desc:"שדה פרחים",          price:"₪25 לזר", emoji:"🌼", tags:["cheerful","yellow","bright","delicate"],         img:"https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=300&q=75"},
+  {name:"קרווה",            desc:"מסתורי ויפה",        price:"₪41 לזר", emoji:"🌼", tags:["exotic","yellow","dramatic","elegant"],          img:"https://images.unsplash.com/photo-1462275646964-a0e3386b89fa?w=300&q=75"},
+  {name:"דפנה צהובה",       desc:"עדין ועשיר",         price:"₪48 לזר", emoji:"🌼", tags:["fragrant","yellow","delicate","elegant"],        img:"https://images.unsplash.com/photo-1590598016509-bce9e90a3ded?w=300&q=75"},
+  {name:"שמשון",            desc:"מזהיר וחיובי",       price:"₪33 לזר", emoji:"☀️", tags:["cheerful","yellow","bold","bright"],             img:"https://images.unsplash.com/photo-1444930694458-01babf71870c?w=300&q=75"},
+  {name:"דהליה שחורה",      desc:"מסתורי ועז",         price:"₪80 לזר", emoji:"🖤", tags:["dramatic","exotic","bold"],                      img:"https://images.unsplash.com/photo-1508610048659-a06b669e3321?w=300&q=75"},
+  {name:"פרפר כחול",        desc:"נדיר ויפהפה",        price:"₪92 לזר", emoji:"💙", tags:["exotic","dramatic","luxury","bold"],             img:"https://images.unsplash.com/photo-1533038590840-1cde6e668a91?w=300&q=75"},
+  {name:"זנגביל פרחוני",   desc:"טרופי וחי",           price:"₪76 לזר", emoji:"🌺", tags:["exotic","colorful","dramatic","bold"],           img:"https://images.unsplash.com/photo-1548094990-c16ca90f1f0d?w=300&q=75"},
+  {name:"ספת הגבעות",       desc:"פראי ועוצמתי",       price:"₪55 לזר", emoji:"🌿", tags:["dramatic","bold","calming","exotic"],            img:"https://images.unsplash.com/photo-1471194402529-8e0f5cf8f08c?w=300&q=75"},
+  {name:"נרקיס כחול",       desc:"חלומי ורך",          price:"₪67 לזר", emoji:"💙", tags:["exotic","purple","elegant","delicate"],          img:"https://images.unsplash.com/photo-1566737236500-c8ac43014a67?w=300&q=75"},
+  {name:"אנמון אדום",       desc:"פראי וסוחף",         price:"₪38 לזר", emoji:"🌹", tags:["dramatic","red","bold","classic"],               img:"https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=300&q=75"},
+  {name:"רניקולוס ורוד",   desc:"מעוגל ועדין",         price:"₪43 לזר", emoji:"🌸", tags:["romantic","pink","delicate","elegant"],          img:"https://images.unsplash.com/photo-1587530207272-c9b3c6d6f66e?w=300&q=75"},
+  {name:"לוטוס לבן",        desc:"רוחני ונדיר",        price:"₪120 לזר",emoji:"🪷", tags:["luxury","white","exotic","calming","elegant"],   img:"https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?w=300&q=75"},
+  {name:"כלנית אדומה",      desc:"ישראלי ואהוב",       price:"₪22 לזר", emoji:"🌹", tags:["classic","red","bright","cheerful"],             img:"https://images.unsplash.com/photo-1462275646964-a0e3386b89fa?w=300&q=75"},
+  {name:"נרקיס צהוב",       desc:"אביב ושמחה",         price:"₪28 לזר", emoji:"🌼", tags:["cheerful","yellow","bright","classic","fragrant"],img:"https://images.unsplash.com/photo-1455659817273-f96807779a8a?w=300&q=75"},
+  {name:"כרכום סגול",       desc:"עדין ומשמח",         price:"₪31 לזר", emoji:"💜", tags:["delicate","purple","cheerful","calming"],        img:"https://images.unsplash.com/photo-1533038590840-1cde6e668a91?w=300&q=75"},
+  {name:"פרג אדום",         desc:"עז ומרגש",            price:"₪26 לזר", emoji:"🌹", tags:["dramatic","red","bold","bright"],                img:"https://images.unsplash.com/photo-1548094990-c16ca90f1f0d?w=300&q=75"},
+  {name:"טיטוניה כתומה",   desc:"חם וכובש",            price:"₪34 לזר", emoji:"🧡", tags:["bold","orange","bright","cheerful"],             img:"https://images.unsplash.com/photo-1444930694458-01babf71870c?w=300&q=75"},
+];
+
+const TAG_LABELS = {
+  "הכל":"הכל","romantic":"רומנטי","elegant":"אלגנטי","cheerful":"עליז",
+  "exotic":"אקזוטי","fragrant":"ריחני","delicate":"עדין",
+  "bold":"נועז","luxury":"יוקרתי","calming":"מרגיע","dramatic":"דרמטי"
+};
+
+/* ═══════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════ */
+let idx = 0;
+const liked = [], disliked = [];
+let prevPage = 'page-hero';
+let catTag = 'הכל';
+let swiping = false; // lock during animation
+
+/* ═══════════════════════════════════════════
+   NAVIGATION
+═══════════════════════════════════════════ */
+function goTo(pageId) {
+  const cur = document.querySelector('.page.active');
+  if (cur) prevPage = cur.id;
+  cur && cur.classList.remove('active');
+  document.getElementById(pageId).classList.add('active');
+  window.scrollTo(0, 0);
+  if (pageId === 'page-catalog') renderCatalog();
+}
+
+function goBack() {
+  goTo(prevPage === 'page-catalog' ? 'page-hero' : prevPage);
+}
+
+/* ═══════════════════════════════════════════
+   CARD STACK
+═══════════════════════════════════════════ */
+function buildStack() {
+  const stack = document.getElementById('card-stack');
+  stack.innerHTML = '';
+  const slice = SWIPE_DECK.slice(idx, idx + 3);
+  // render back-to-front (index 2 first so index 0 is on top)
+  for (let i = Math.min(2, slice.length - 1); i >= 0; i--) {
+    const f = slice[i];
+    const el = document.createElement('div');
+    el.className = 'fcard' + (i === 0 ? ' top' : i === 1 ? ' behind1' : ' behind2');
+    el.innerHTML = `
+      <div class="ov ov-like">❤️</div>
+      <div class="ov ov-nope">✕</div>
+      <img src="${f.img}" alt="${f.name}"/>
+      <div class="fcard-body">
+        <div class="fcard-name">${f.emoji} ${f.name}</div>
+        <div class="fcard-desc">${f.desc}</div>
+        <div class="fcard-price">${f.price}</div>
+      </div>`;
+    stack.appendChild(el);
+  }
+  updateProg();
+  attachDrag();
+}
+
+function updateProg() {
+  const done = liked.length + disliked.length;
+  const total = SWIPE_DECK.length;
+  document.getElementById('swipe-prog').textContent =
+    `פרח ${Math.min(done + 1, total)} מתוך ${total}`;
+}
+
+function topCard() {
+  // The top card has class "top"
+  return document.querySelector('#card-stack .fcard.top');
+}
+
+/* ═══════════════════════════════════════════
+   FLOAT ANIMATION
+═══════════════════════════════════════════ */
+function doFloat(dir) {
+  const ic = document.getElementById('float-icon');
+  if (dir === 'right') {
+    ic.textContent = '❤️';
+    ic.style.fontSize = '9rem';
+    ic.style.textShadow = '';
+  } else {
+    ic.textContent = '✕';
+    ic.style.fontSize = '8rem';
+    ic.style.color = '#c9697a';
+    ic.style.fontWeight = '900';
+    ic.style.textShadow = '0 0 30px rgba(201,105,122,.5)';
+  }
+  ic.classList.remove('pop');
+  void ic.offsetWidth; // reflow
+  ic.classList.add('pop');
+  setTimeout(() => { ic.classList.remove('pop'); ic.style.color = ''; ic.style.fontWeight = ''; ic.style.textShadow = ''; }, 700);
+}
+
+/* ═══════════════════════════════════════════
+   SWIPE LOGIC
+═══════════════════════════════════════════ */
+async function doSwipe(dir) {
+  if (swiping || idx >= SWIPE_DECK.length) return;
+  swiping = true;
+
+  const flower = SWIPE_DECK[idx];
+  if (dir === 'right') liked.push(flower); else disliked.push(flower);
+
+  doFloat(dir);
+
+  const card = topCard();
+  if (card) {
+    const ov = card.querySelector(dir === 'right' ? '.ov-like' : '.ov-nope');
+    if (ov) ov.style.opacity = '1';
+    const tx = dir === 'right' ? 600 : -600;
+    const rot = dir === 'right' ? 25 : -25;
+    card.style.transition = 'transform .4s ease, opacity .4s ease';
+    card.style.transform = `translateX(${tx}px) rotate(${rot}deg)`;
+    card.style.opacity = '0';
+    await new Promise(r => setTimeout(r, 420));
+  }
+
+  idx++;
+  swiping = false;
+
+  if (idx >= SWIPE_DECK.length) {
+    showResults();
+  } else {
+    buildStack();
+  }
+}
+
+function restartSwipe() {
+  idx = 0; liked.length = 0; disliked.length = 0;
+  buildStack();
+  goTo('page-swipe');
+}
+
+/* ═══════════════════════════════════════════
+   DRAG / TOUCH
+═══════════════════════════════════════════ */
+function attachDrag() {
+  const card = topCard();
+  if (!card) return;
+
+  let startX = 0, curX = 0, active = false;
+
+  function onDown(x) {
+    if (swiping) return;
+    startX = x; curX = 0; active = true;
+    card.style.transition = 'none';
+  }
+  function onMove(x) {
+    if (!active) return;
+    curX = x - startX;
+    card.style.transform = `translateX(${curX}px) rotate(${curX * 0.07}deg)`;
+    const lo = card.querySelector('.ov-like');
+    const no = card.querySelector('.ov-nope');
+    if (curX > 20)       { lo.style.opacity = Math.min(1, (curX - 20) / 80); no.style.opacity = 0; }
+    else if (curX < -20) { no.style.opacity = Math.min(1, (-curX - 20) / 80); lo.style.opacity = 0; }
+    else                 { lo.style.opacity = 0; no.style.opacity = 0; }
+  }
+  function onUp() {
+    if (!active) return;
+    active = false;
+    if      (curX >  90) doSwipe('right');
+    else if (curX < -90) doSwipe('left');
+    else { card.style.transition = 'transform .3s ease'; card.style.transform = ''; }
+    curX = 0;
+  }
+
+  card.addEventListener('mousedown',  e => { e.preventDefault(); onDown(e.clientX); });
+  window.addEventListener('mousemove',e => onMove(e.clientX));
+  window.addEventListener('mouseup',  onUp);
+  card.addEventListener('touchstart', e => onDown(e.touches[0].clientX), { passive: true });
+  window.addEventListener('touchmove',e => onMove(e.touches[0].clientX), { passive: true });
+  window.addEventListener('touchend', onUp);
+}
+
+/* ═══════════════════════════════════════════
+   BUTTON WIRING (done after DOM ready)
+═══════════════════════════════════════════ */
+document.getElementById('btn-like').addEventListener('click', () => doSwipe('right'));
+document.getElementById('btn-nope').addEventListener('click', () => doSwipe('left'));
+
+/* ═══════════════════════════════════════════
+   RESULTS
+═══════════════════════════════════════════ */
+/* Extra details for back face */
+const FLOWER_DETAILS = {
+  "ורד אדום קלאסי":  "מלך הפרחים. מסמל אהבה עמוקה ותשוקה. מוצאו מאסיה ומגודל ברחבי העולם. עמידות: 7-10 ימים.",
+  "שושנה לבנה":      "סמל טוהר ואצילות. מועדפת בחתונות ואירועים רשמיים. ריחה עדין ומרגיע. עמידות: 5-8 ימים.",
+  "חמנייה":          "פרח השמש — תמיד מסתובב לעבר האור. מקורו בצפון אמריקה. מוסיף חיות לכל זר. עמידות: 6-10 ימים.",
+  "לבנדר":           "צמח ריחני מהים התיכון. מרגיע ומפיג חרדה. פופולרי מאוד בתעשיית הבשמים. עמידות: שבועיים+.",
+  "אורכידאה סגולה":  "אחד הפרחים המשוכללים בטבע. גדל בתנאים טרופיים. מסמל יוקרה ועידון. עמידות: 3-6 שבועות.",
+  "צבעוני":          "פרח האביב הקלאסי. בא בכל צבעי הקשת. מוצאו מאסיה המרכזית. עמידות: 5-10 ימים.",
+  "דהליה סגולה":     "פרח מקסיקני בעל מאות זנים. יכול להגיע ל-30 ס״מ בקוטר. עמידות: 3-6 ימים.",
+  "פאוניה ורודה":    "מסמל פריחה ורומנטיקה. עונתו מאי-יוני. ריחו עמוק ומפתה. עמידות: 5-7 ימים.",
+  "מרגנית לבנה":     "פרח פשוט ושמח. מסמל תמימות ורוח קלילה. מושלם לזרי בר. עמידות: 5-8 ימים.",
+  "ליליום כתום":     "פרח הוד ומלכות. ריחו חזק וכובש. מוצאו מאסיה. מועדף לאירועים מרשימים. עמידות: 7-14 ימים.",
+};
+const TAG_HE = {
+  romantic:"רומנטי",classic:"קלאסי",red:"אדום",fragrant:"ריחני",delicate:"עדין",
+  white:"לבן",elegant:"אלגנטי",cheerful:"עליז",bright:"בהיר",yellow:"צהוב",
+  bold:"נועז",purple:"סגול",calming:"מרגיע",exotic:"אקזוטי",luxury:"יוקרתי",
+  colorful:"צבעוני",dramatic:"דרמטי",pink:"ורוד",orange:"כתום",
+};
+
+function tileHTML(f) {
+  const detail = FLOWER_DETAILS[f.name] ||
+    f.desc + ". עמידות ממוצעת: 5-10 ימים. מושלם לזרים, מתנות ועיצוב הבית.";
+  const tagsHtml = (f.tags||[]).map(t=>`<span class="flip-tag">${TAG_HE[t]||t}</span>`).join('');
+  return `<div class="ftile"
+      onmousedown="holdStart(event,this)" onmouseup="holdEnd(event,this)" onmouseleave="holdEnd(event,this)"
+      ontouchstart="holdStart(event,this)" ontouchend="holdEnd(event,this)" ontouchcancel="holdEnd(event,this)">
+    <div class="hold-ring"></div>
+    <div class="ftile-inner">
+      <div class="ftile-front">
+        <img src="${f.img}" alt="${f.name}" loading="lazy"/>
+        <div class="ftile-info"><h4>${f.emoji} ${f.name}</h4><span>${f.price}</span></div>
+      </div>
+      <div class="ftile-back">
+        <span class="flip-emoji">${f.emoji}</span>
+        <div class="flip-name">${f.name}</div>
+        <div class="flip-price">${f.price}</div>
+        <div class="flip-tags">${tagsHtml}</div>
+        <div class="flip-desc-long">${detail}</div>
+        <div class="flip-hint">לחץ לחיצה ארוכה לחזרה ↩</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ═══════════════════════════════════════════
+   LONG-PRESS → FLIP (600ms)
+═══════════════════════════════════════════ */
+const HOLD_MS = 600;
+let _holdTimer = null, _holdRaf = null, _holdT0 = 0;
+
+function holdStart(e, tile) {
+  if (e.button && e.button !== 0) return;
+  e.preventDefault();
+  _holdCancel();
+  _holdT0 = Date.now();
+  const ring = tile.querySelector('.hold-ring');
+  ring.style.opacity = '1';
+  ring.style.setProperty('--p','0%');
+  function tick() {
+    const p = Math.min(100, ((Date.now()-_holdT0)/HOLD_MS)*100);
+    ring.style.setProperty('--p', p+'%');
+    if (p < 100) _holdRaf = requestAnimationFrame(tick);
+  }
+  _holdRaf = requestAnimationFrame(tick);
+  _holdTimer = setTimeout(() => {
+    ring.style.opacity = '0';
+    tile.classList.toggle('flipped');
+    _holdCancel();
+  }, HOLD_MS);
+}
+function holdEnd(e, tile) {
+  const ring = tile && tile.querySelector('.hold-ring');
+  if (ring) ring.style.opacity = '0';
+  _holdCancel();
+}
+function _holdCancel() {
+  clearTimeout(_holdTimer); _holdTimer = null;
+  cancelAnimationFrame(_holdRaf); _holdRaf = null;
+}
+
+function getRecs() {
+  if (!liked.length) return CATALOG.slice(0, 9);
+  const score = {};
+  liked.forEach(f => f.tags.forEach(t => { score[t] = (score[t] || 0) + 1; }));
+  const likedNames = new Set(liked.map(f => f.name));
+  return CATALOG
+    .filter(f => !likedNames.has(f.name))
+    .map(f => ({ ...f, _s: f.tags.reduce((s, t) => s + (score[t] || 0), 0) }))
+    .sort((a, b) => b._s - a._s)
+    .slice(0, 9);
+}
+
+function showResults() {
+  document.getElementById('liked-grid').innerHTML = liked.length
+    ? liked.map(tileHTML).join('')
+    : '<p style="color:#bbb;font-size:.9rem">לא אהבת פרחים בסיבוב הזה.</p>';
+
+  document.getElementById('recs-grid').innerHTML = getRecs().map(tileHTML).join('');
+
+  if (liked.length) {
+    const score = {};
+    liked.forEach(f => f.tags.forEach(t => { score[t] = (score[t] || 0) + 1; }));
+    const top = Object.entries(score).sort((a, b) => b[1] - a[1]).slice(0, 3)
+                      .map(([t]) => TAG_LABELS[t] || t).join(', ');
+    document.getElementById('res-subtitle').textContent = `סגנון שלך: ${top}`;
+  } else {
+    document.getElementById('res-subtitle').textContent = 'הנה כמה פרחים שאולי יעניינו אותך';
+  }
+
+  goTo('page-results');
+}
+
+/* ═══════════════════════════════════════════
+   CATALOG
+═══════════════════════════════════════════ */
+function renderCatalog(tag) {
+  if (tag !== undefined) catTag = tag;
+
+  document.getElementById('cat-filters').innerHTML =
+    Object.keys(TAG_LABELS).map(t =>
+      `<button class="fbtn${catTag === t ? ' on' : ''}" onclick="renderCatalog('${t}')">${TAG_LABELS[t]}</button>`
+    ).join('');
+
+  const list = catTag === 'הכל' ? CATALOG : CATALOG.filter(f => f.tags.includes(catTag));
+  document.getElementById('cat-count').textContent = `מציג ${list.length} פרחים`;
+  document.getElementById('cat-grid').innerHTML = list.map(tileHTML).join('');
+}
+
+/* ═══════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════ */
+buildStack();
+</script>
+</body>
+</html>
