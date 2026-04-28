@@ -202,6 +202,55 @@ nav{
 .flip-tag{font-size:.65rem;background:rgba(201,105,122,.1);color:var(--rose);padding:.16rem .5rem;border-radius:50px}
 .flip-desc-long{font-size:.78rem;color:#777;font-weight:300;line-height:1.55;margin-bottom:.5rem}
 .flip-hint{font-size:.62rem;color:#ccc;font-style:italic;margin-top:auto;text-align:center}
+/* ── SIGNUP PAGE ── */
+#page-signup.active{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-height:100vh;padding:90px 1.5rem 3rem;
+}
+.signup-card{
+  background:#fff;border-radius:24px;padding:2.5rem 2.2rem;
+  box-shadow:0 12px 48px rgba(44,44,44,.11);
+  width:100%;max-width:480px;
+}
+.signup-logo{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--rose);text-align:center;margin-bottom:.3rem}
+.signup-logo span{font-style:italic}
+.signup-title{font-family:'Playfair Display',serif;font-size:1.6rem;text-align:center;margin-bottom:.25rem}
+.signup-sub{text-align:center;color:#999;font-size:.85rem;font-weight:300;margin-bottom:2rem}
+.signup-row{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
+.field{display:flex;flex-direction:column;gap:.35rem;margin-bottom:1rem}
+.field label{font-size:.78rem;font-weight:500;color:#666;letter-spacing:.04em}
+.field input,.field select{
+  border:1.5px solid #e8e0d8;border-radius:10px;
+  padding:.65rem .9rem;font-family:'Heebo',sans-serif;font-size:.9rem;
+  color:var(--charcoal);background:#faf9f7;
+  outline:none;transition:border-color .2s,background .2s;
+}
+.field input:focus,.field select:focus{border-color:var(--rose);background:#fff}
+.field input::placeholder{color:#ccc;font-weight:300}
+.field-icon{position:relative}
+.field-icon input{padding-left:2.4rem}
+.field-icon .icon{position:absolute;left:.75rem;top:50%;transform:translateY(-50%);font-size:.95rem;pointer-events:none}
+.pw-wrap{position:relative}
+.pw-wrap input{padding-left:2.4rem;padding-right:2.4rem}
+.pw-toggle{position:absolute;right:.75rem;top:50%;transform:translateY(-50%);cursor:pointer;font-size:.88rem;color:#bbb;background:none;border:none;padding:0;transition:color .2s}
+.pw-toggle:hover{color:var(--rose)}
+.signup-divider{display:flex;align-items:center;gap:.7rem;margin:.4rem 0 1.2rem;color:#ddd;font-size:.75rem}
+.signup-divider::before,.signup-divider::after{content:'';flex:1;height:1px;background:#ede8e0}
+.btn-signup{
+  width:100%;padding:.95rem;border-radius:50px;border:none;
+  background:var(--rose);color:#fff;font-family:'Heebo',sans-serif;
+  font-size:1rem;font-weight:500;cursor:pointer;margin-top:.5rem;
+  box-shadow:0 4px 18px rgba(201,105,122,.3);transition:all .2s;
+}
+.btn-signup:hover{background:#b05568;transform:translateY(-2px);box-shadow:0 7px 24px rgba(201,105,122,.4)}
+.signup-login{text-align:center;margin-top:1.2rem;font-size:.83rem;color:#999;font-weight:300}
+.signup-login a{color:var(--rose);text-decoration:none;font-weight:500}
+.signup-login a:hover{text-decoration:underline}
+.field-note{font-size:.72rem;color:#bbb;margin-top:.2rem}
+.signup-success{display:none;text-align:center;padding:2rem 0}
+.signup-success .s-emoji{font-size:3.5rem;margin-bottom:1rem;display:block}
+.signup-success h3{font-family:'Playfair Display',serif;font-size:1.5rem;margin-bottom:.5rem}
+.signup-success p{color:#888;font-weight:300;font-size:.9rem}
 /* hold-ring progress */
 .hold-ring{
   position:absolute;inset:-3px;border-radius:19px;pointer-events:none;z-index:5;
@@ -216,8 +265,8 @@ nav{
 
 <!-- NAV -->
 <nav>
-  <div class="logo" onclick="goTo('page-hero')">פ<span>ריחה</span></div>
-  <button class="nav-btn" onclick="goTo('page-swipe')">התחל להתאים ✦</button>
+  <div class="logo" onclick="navHome()">פ<span>ריחה</span></div>
+  <div id="nav-auth" style="display:flex;gap:.5rem;align-items:center"></div>
 </nav>
 
 <!-- Float anim layer -->
@@ -288,6 +337,204 @@ nav{
     <p class="cat-count" id="cat-count"></p>
     <p style="font-size:.73rem;color:#bbb;margin-bottom:.8rem;font-weight:300;text-align:center">לחיצה ארוכה על פרח לפרטים נוספים 🔍</p>
     <div class="cat-grid" id="cat-grid"></div>
+  </div>
+</div>
+
+<!-- ════════════════ LOGIN ════════════════ -->
+<div id="page-login" class="page">
+  <div class="signup-card" style="max-width:420px">
+    <div class="signup-logo">פ<span>ריחה</span></div>
+    <h2 class="signup-title">כניסה לאתר</h2>
+    <p class="signup-sub">ברוך הבא חזרה 🌸</p>
+    <div id="login-form">
+      <div class="field">
+        <label>כתובת מייל</label>
+        <div class="field-icon">
+          <span class="icon">✉</span>
+          <input type="email" id="login-email" placeholder="israel@example.com" onkeydown="if(event.key==='Enter')handleLogin()" />
+        </div>
+      </div>
+      <div class="field">
+        <label>סיסמה</label>
+        <div class="pw-wrap field-icon">
+          <span class="icon">🔒</span>
+          <input type="password" id="login-pw" placeholder="הסיסמה שלך" onkeydown="if(event.key==='Enter')handleLogin()" />
+          <button class="pw-toggle" onclick="togglePw('login-pw',this)">👁</button>
+        </div>
+      </div>
+      <div id="login-error" style="color:#c9697a;font-size:.82rem;margin-bottom:.7rem;display:none;text-align:center"></div>
+      <button class="btn-signup" onclick="handleLogin()">✦ כניסה</button>
+      <p class="signup-login" style="margin-top:.9rem">
+        <a href="#" onclick="goTo('page-forgot');return false">שכחתי סיסמה</a>
+        &nbsp;·&nbsp;
+        <a href="#" onclick="goTo('page-signup');return false">הרשמה לאתר</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════ FORGOT PASSWORD ════════════════ -->
+<div id="page-forgot" class="page">
+  <div class="signup-card" style="max-width:420px">
+    <div class="signup-logo">פ<span>ריחה</span></div>
+    <h2 class="signup-title">איפוס סיסמה</h2>
+    <p class="signup-sub">הזן את כתובת המייל שלך ונשלח לך קישור לאיפוס</p>
+    <div id="forgot-form">
+      <div class="field">
+        <label>כתובת מייל</label>
+        <div class="field-icon">
+          <span class="icon">✉</span>
+          <input type="email" id="forgot-email" placeholder="israel@example.com" />
+        </div>
+      </div>
+      <div id="forgot-error" style="color:#c9697a;font-size:.82rem;margin-bottom:.7rem;display:none;text-align:center"></div>
+      <button class="btn-signup" onclick="handleForgot()">✦ שלח קישור לאיפוס</button>
+      <p class="signup-login" style="margin-top:.9rem">
+        <a href="#" onclick="goTo('page-login');return false">חזרה לכניסה</a>
+      </p>
+    </div>
+    <div id="forgot-sent" style="display:none;text-align:center;padding:1.5rem 0">
+      <span style="font-size:3rem;display:block;margin-bottom:1rem">📬</span>
+      <h3 style="font-family:'Playfair Display',serif;font-size:1.3rem;margin-bottom:.5rem">הקישור נשלח!</h3>
+      <p style="color:#888;font-size:.88rem;font-weight:300;line-height:1.7">
+        שלחנו קישור לאיפוס סיסמה לכתובת<br/>
+        <strong id="forgot-sent-email" style="color:var(--rose)"></strong><br/><br/>
+        הקישור תקף ל-<strong>3 שעות</strong> בלבד.<br/>
+        לאחר מכן יהיה עליך לבקש קישור חדש.
+      </p>
+      <div id="reset-demo-box" style="margin:1.2rem 0;background:#faf0f2;border:1px dashed #e8b0bb;border-radius:12px;padding:1rem;font-size:.78rem;color:#888;direction:ltr;text-align:left"></div>
+      <button class="btn btn-outline" onclick="goTo('page-login')" style="margin-top:.5rem;width:100%;padding:.75rem;border-radius:50px">חזרה לכניסה</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════ RESET PASSWORD ════════════════ -->
+<div id="page-reset" class="page">
+  <div class="signup-card" style="max-width:420px">
+    <div class="signup-logo">פ<span>ריחה</span></div>
+    <h2 class="signup-title">סיסמה חדשה</h2>
+    <p class="signup-sub">בחר סיסמה חדשה לחשבונך</p>
+    <div id="reset-form">
+      <div id="reset-expired-msg" style="display:none;background:#fff0f2;border:1px solid #f5c0c8;border-radius:12px;padding:1rem;text-align:center;margin-bottom:1rem;font-size:.88rem;color:#c9697a">
+        הקישור פג תוקף. <a href="#" onclick="goTo('page-forgot');return false" style="color:var(--rose);font-weight:500">לחץ כאן לקישור חדש</a>
+      </div>
+      <div id="reset-fields">
+        <div class="field">
+          <label>סיסמה חדשה</label>
+          <div class="pw-wrap field-icon">
+            <span class="icon">🔒</span>
+            <input type="password" id="reset-pw1" placeholder="לפחות 8 תווים" />
+            <button class="pw-toggle" onclick="togglePw('reset-pw1',this)">👁</button>
+          </div>
+          <span class="field-note" id="reset-pw-strength"></span>
+        </div>
+        <div class="field">
+          <label>אימות סיסמה</label>
+          <div class="pw-wrap field-icon">
+            <span class="icon">🔒</span>
+            <input type="password" id="reset-pw2" placeholder="הקלד שוב" />
+            <button class="pw-toggle" onclick="togglePw('reset-pw2',this)">👁</button>
+          </div>
+        </div>
+        <div id="reset-error" style="color:#c9697a;font-size:.82rem;margin-bottom:.7rem;display:none;text-align:center"></div>
+        <button class="btn-signup" onclick="handleReset()">✦ עדכן סיסמה</button>
+      </div>
+    </div>
+    <div id="reset-success" style="display:none;text-align:center;padding:1.5rem 0">
+      <span style="font-size:3rem;display:block;margin-bottom:1rem">✅</span>
+      <h3 style="font-family:'Playfair Display',serif;font-size:1.3rem;margin-bottom:.5rem">הסיסמה עודכנה!</h3>
+      <p style="color:#888;font-size:.88rem;font-weight:300">תוכל כעת להתחבר עם הסיסמה החדשה שלך.</p>
+      <button class="btn btn-rose" onclick="goTo('page-login')" style="margin-top:1rem">כניסה לאתר</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════ SIGNUP ════════════════ -->
+<div id="page-signup" class="page">
+  <div class="signup-card">
+    <div class="signup-logo">פ<span>ריחה</span></div>
+    <h2 class="signup-title">יצירת חשבון</h2>
+    <p class="signup-sub">הצטרפו לקהילת חובבי הפרחים שלנו 🌸</p>
+
+    <div id="signup-form">
+      <div class="signup-row">
+        <div class="field">
+          <label>שם פרטי</label>
+          <input type="text" id="fname" placeholder="ישראל" />
+        </div>
+        <div class="field">
+          <label>שם משפחה</label>
+          <input type="text" id="lname" placeholder="ישראלי" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label>תאריך לידה</label>
+        <input type="date" id="dob" max="" />
+        <span class="field-note">יש להיות מעל גיל 18</span>
+      </div>
+
+      <div class="field">
+        <label>כתובת מייל</label>
+        <div class="field-icon">
+          <span class="icon">✉</span>
+          <input type="email" id="email" placeholder="israel@example.com" />
+        </div>
+      </div>
+
+      <div class="signup-divider">כתובת מגורים</div>
+
+      <div class="signup-row">
+        <div class="field" style="grid-column:1/-1">
+          <label>רחוב ומספר בית</label>
+          <input type="text" id="street" placeholder="רחוב הרצל 12" />
+        </div>
+      </div>
+      <div class="signup-row">
+        <div class="field">
+          <label>עיר</label>
+          <input type="text" id="city" placeholder="תל אביב" />
+        </div>
+        <div class="field">
+          <label>מיקוד</label>
+          <input type="text" id="zip" placeholder="6100000" inputmode="numeric" />
+        </div>
+      </div>
+
+      <div class="signup-divider">אבטחה</div>
+
+      <div class="field">
+        <label>סיסמה</label>
+        <div class="pw-wrap field-icon">
+          <span class="icon">🔒</span>
+          <input type="password" id="password" placeholder="לפחות 8 תווים" />
+          <button class="pw-toggle" onclick="togglePw('password',this)">👁</button>
+        </div>
+        <span class="field-note" id="pw-strength"></span>
+      </div>
+
+      <div class="field">
+        <label>אימות סיסמה</label>
+        <div class="pw-wrap field-icon">
+          <span class="icon">🔒</span>
+          <input type="password" id="password2" placeholder="הקלד שוב" />
+          <button class="pw-toggle" onclick="togglePw('password2',this)">👁</button>
+        </div>
+      </div>
+
+      <button class="btn-signup" onclick="handleSignup()">✦ הצטרף עכשיו</button>
+
+      <p class="signup-login">כבר יש לך חשבון? <a href="#" onclick="goTo('page-login');return false">כניסה</a></p>
+    </div>
+
+    <div class="signup-success" id="signup-success">
+      <span class="s-emoji">🌺</span>
+      <h3 id="success-name">ברוך הבא!</h3>
+      <p>החשבון שלך נוצר בהצלחה.<br/>נשמח לעזור לך למצוא את הפרח המושלם.</p>
+      <br/>
+      <button class="btn btn-rose" onclick="goTo('page-swipe')" style="margin-top:.5rem">💐 התחל להחליק</button>
+      <br/><button class="btn btn-outline" onclick="goTo('page-hero')" style="margin-top:.5rem">לדף הבית</button>
+    </div>
   </div>
 </div>
 
@@ -676,8 +923,255 @@ function renderCatalog(tag) {
 }
 
 /* ═══════════════════════════════════════════
+   AUTH — SESSION (API-backed)
+═══════════════════════════════════════════ */
+const SESSION_KEY = 'periha_session';
+
+function currentUser() {
+  const raw = sessionStorage.getItem(SESSION_KEY);
+  return raw ? JSON.parse(raw) : null;
+}
+function setSession(user) { sessionStorage.setItem(SESSION_KEY, JSON.stringify(user)); }
+function clearSession()   { sessionStorage.removeItem(SESSION_KEY); }
+
+async function apiFetch(path, body) {
+  const res = await fetch(path, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  const data = await res.json();
+  return { ok: res.ok, status: res.status, data };
+}
+
+/* ═══════════════════════════════════════════
+   AUTH — NAVIGATION (auth-aware)
+═══════════════════════════════════════════ */
+const PROTECTED = ['page-swipe','page-results','page-catalog'];
+
+function navHome() {
+  currentUser() ? goTo('page-hero') : goTo('page-login');
+}
+
+function updateNavUI() {
+  const user = currentUser();
+  const nav = document.getElementById('nav-auth');
+  if (user) {
+    nav.innerHTML = `
+      <span style="font-size:.82rem;color:#888;font-weight:300">שלום, ${user.fname}</span>
+      <button class="nav-btn" onclick="goTo('page-swipe')">התחל להתאים ✦</button>
+      <button class="nav-btn" style="background:transparent;color:var(--rose);border:1.5px solid var(--rose)" onclick="handleLogout()">יציאה</button>`;
+  } else {
+    nav.innerHTML = `
+      <button class="nav-btn" style="background:transparent;color:var(--rose);border:1.5px solid var(--rose)" onclick="goTo('page-signup')">הרשמה</button>
+      <button class="nav-btn" onclick="goTo('page-login')">כניסה</button>`;
+  }
+}
+
+function handleLogout() {
+  clearSession();
+  updateNavUI();
+  goTo('page-login');
+}
+
+/* ═══════════════════════════════════════════
+   LOGIN
+═══════════════════════════════════════════ */
+async function handleLogin() {
+  const email = document.getElementById('login-email').value.trim().toLowerCase();
+  const pw    = document.getElementById('login-pw').value;
+  const errEl = document.getElementById('login-error');
+  const btn   = document.querySelector('#login-form .btn-signup');
+  errEl.style.display = 'none';
+
+  if (!email || !pw) { showErr(errEl, 'נא למלא את כל השדות'); return; }
+
+  btn.textContent = 'מתחבר...'; btn.disabled = true;
+  const { ok, status, data } = await apiFetch('/api/login', { email, password: pw });
+  btn.textContent = '✦ כניסה'; btn.disabled = false;
+
+  if (!ok) {
+    if (status === 404) showErr(errEl, 'המייל אינו רשום במערכת. <a href="#" onclick="goTo(\'page-signup\');return false" style="color:var(--rose)">להרשמה לחץ כאן</a>');
+    else if (status === 401) showErr(errEl, 'סיסמה שגויה. <a href="#" onclick="goTo(\'page-forgot\');return false" style="color:var(--rose)">שכחת סיסמה?</a>');
+    else showErr(errEl, data.error || 'שגיאה, נסה שוב');
+    return;
+  }
+
+  setSession({ email: data.email, fname: data.fname });
+  updateNavUI();
+  document.getElementById('login-email').value = '';
+  document.getElementById('login-pw').value = '';
+  goTo('page-hero');
+}
+
+/* ═══════════════════════════════════════════
+   FORGOT PASSWORD
+═══════════════════════════════════════════ */
+async function handleForgot() {
+  const email = document.getElementById('forgot-email').value.trim().toLowerCase();
+  const errEl = document.getElementById('forgot-error');
+  const btn   = document.querySelector('#forgot-form .btn-signup');
+  errEl.style.display = 'none';
+
+  if (!email || !email.includes('@')) { showErr(errEl, 'נא להזין כתובת מייל תקינה'); return; }
+
+  btn.textContent = 'שולח...'; btn.disabled = true;
+  const { ok, data } = await apiFetch('/api/send-reset', { email });
+  btn.textContent = '✦ שלח קישור לאיפוס'; btn.disabled = false;
+
+  if (!ok) { showErr(errEl, data.error || 'שגיאה, נסה שוב'); return; }
+
+  // Show success
+  document.getElementById('forgot-form').style.display = 'none';
+  document.getElementById('forgot-sent-email').textContent = email;
+  document.getElementById('reset-demo-box').style.display = 'none';
+  document.getElementById('forgot-sent').style.display = 'block';
+}
+
+/* ═══════════════════════════════════════════
+   RESET PASSWORD (via token)
+═══════════════════════════════════════════ */
+function handleResetLink(token) {
+  sessionStorage.setItem('periha_reset_token', token);
+  goTo('page-reset');
+  document.getElementById('reset-expired-msg').style.display = 'none';
+  document.getElementById('reset-fields').style.display = 'block';
+  document.getElementById('reset-pw1').addEventListener('input', function() {
+    pwStrength(this.value, document.getElementById('reset-pw-strength'));
+  });
+}
+
+async function handleReset() {
+  const token = sessionStorage.getItem('periha_reset_token');
+  const errEl = document.getElementById('reset-error');
+  const btn   = document.querySelector('#reset-fields .btn-signup');
+  errEl.style.display = 'none';
+
+  if (!token) { showErr(errEl, 'קישור לא תקין'); return; }
+
+  const pw1 = document.getElementById('reset-pw1').value;
+  const pw2 = document.getElementById('reset-pw2').value;
+  if (pw1.length < 8) { showErr(errEl, 'הסיסמה חייבת להכיל לפחות 8 תווים'); return; }
+  if (pw1 !== pw2)    { showErr(errEl, 'הסיסמאות אינן תואמות'); return; }
+
+  btn.textContent = 'מעדכן...'; btn.disabled = true;
+  const { ok, status, data } = await apiFetch('/api/reset-password', { token, password: pw1 });
+  btn.textContent = '✦ עדכן סיסמה'; btn.disabled = false;
+
+  if (!ok) {
+    if (status === 410) {
+      showErr(errEl, 'הקישור פג תוקף');
+      document.getElementById('reset-expired-msg').style.display = 'block';
+      document.getElementById('reset-fields').style.display = 'none';
+    } else {
+      showErr(errEl, data.error || 'שגיאה, נסה שוב');
+    }
+    return;
+  }
+
+  sessionStorage.removeItem('periha_reset_token');
+  document.getElementById('reset-form').style.display = 'none';
+  document.getElementById('reset-success').style.display = 'block';
+}
+
+/* ═══════════════════════════════════════════
+   SIGNUP
+═══════════════════════════════════════════ */
+document.getElementById('dob').max = new Date().toISOString().split('T')[0];
+
+document.getElementById('password').addEventListener('input', function() {
+  pwStrength(this.value, document.getElementById('pw-strength'));
+});
+
+function pwStrength(v, el) {
+  if (!v) { el.textContent = ''; return; }
+  let score = 0;
+  if (v.length >= 8) score++;
+  if (/[A-Z]/.test(v)) score++;
+  if (/[0-9]/.test(v)) score++;
+  if (/[^A-Za-z0-9]/.test(v)) score++;
+  const labels = ['','חלשה','בינונית','טובה','חזקה ✓'];
+  const colors = ['','#e9697a','#e8a84a','#7a9e7e','#4a9e7a'];
+  el.textContent = score ? 'חוזק סיסמה: ' + (labels[score]||'') : '';
+  el.style.color = colors[score] || '#bbb';
+}
+
+function togglePw(id, btn) {
+  const inp = document.getElementById(id);
+  inp.type = inp.type === 'password' ? 'text' : 'password';
+  btn.textContent = inp.type === 'password' ? '👁' : '🙈';
+}
+
+function showErr(el, msg) {
+  el.innerHTML = msg;
+  el.style.display = 'block';
+}
+
+async function handleSignup() {
+  const fname  = document.getElementById('fname').value.trim();
+  const lname  = document.getElementById('lname').value.trim();
+  const dob    = document.getElementById('dob').value;
+  const email  = document.getElementById('email').value.trim().toLowerCase();
+  const street = document.getElementById('street').value.trim();
+  const city   = document.getElementById('city').value.trim();
+  const zip    = document.getElementById('zip').value.trim();
+  const pw     = document.getElementById('password').value;
+  const pw2    = document.getElementById('password2').value;
+
+  if (!fname || !lname) { alert('נא למלא שם פרטי ושם משפחה'); return; }
+  if (!dob) { alert('נא לבחור תאריך לידה'); return; }
+  const age = (new Date() - new Date(dob)) / (1000*60*60*24*365.25);
+  if (age < 18) { alert('יש להיות מעל גיל 18 להצטרפות'); return; }
+  if (!email || !email.includes('@')) { alert('נא להזין כתובת מייל תקינה'); return; }
+  if (!street || !city) { alert('נא למלא כתובת מגורים מלאה'); return; }
+  if (pw.length < 8) { alert('הסיסמה חייבת להכיל לפחות 8 תווים'); return; }
+  if (pw !== pw2) { alert('הסיסמאות אינן תואמות'); return; }
+
+  const btn = document.querySelector('#signup-form .btn-signup');
+  btn.textContent = 'נרשם...'; btn.disabled = true;
+
+  const { ok, status, data } = await apiFetch('/api/register', {
+    fname, lname, dob, email, street, city, zip, password: pw
+  });
+
+  btn.textContent = '✦ הצטרף עכשיו'; btn.disabled = false;
+
+  if (!ok) {
+    if (status === 409) {
+      alert('כתובת המייל כבר רשומה במערכת.\nאם שכחת סיסמה, השתמש באפשרות "שכחתי סיסמה" בעמוד הכניסה.');
+      goTo('page-login');
+    } else {
+      alert(data.error || 'שגיאה בהרשמה, נסה שוב');
+    }
+    return;
+  }
+
+  setSession({ email, fname });
+  updateNavUI();
+
+  document.getElementById('signup-form').style.display = 'none';
+  document.getElementById('success-name').textContent = `ברוך הבא, ${fname}! 🌸`;
+  document.getElementById('signup-success').style.display = 'block';
+}
+
+/* ═══════════════════════════════════════════
+   CHECK URL FOR RESET TOKEN ON LOAD
+═══════════════════════════════════════════ */
+const urlParams = new URLSearchParams(window.location.search);
+const urlToken  = urlParams.get('reset');
+if (urlToken) handleResetLink(urlToken);
+// Clean URL
+if (urlToken) window.history.replaceState({}, '', window.location.pathname);
+
+/* ═══════════════════════════════════════════
    INIT
 ═══════════════════════════════════════════ */
+updateNavUI();
+// Show login page first if not logged in
+if (!currentUser()) {
+  document.querySelector('#page-hero').classList.remove('active');
+  document.querySelector('#page-login').classList.add('active');
+}
 buildStack();
 </script>
 </body>
