@@ -841,6 +841,10 @@ let swiping = false; // lock during animation
 ═══════════════════════════════════════════ */
 function goTo(pageId) {
   if (pageId === 'page-profile') { openProfile(); return; }
+  _goTo(pageId);
+}
+
+function _goTo(pageId) {
   const cur = document.querySelector('.page.active');
   if (cur) prevPage = cur.id;
   cur && cur.classList.remove('active');
@@ -1419,7 +1423,7 @@ async function openProfile() {
 
   // My flowers
   await loadMyFlowers();
-  goTo('page-profile');
+  _goTo('page-profile');
 }
 
 async function loadMyFlowers() {
