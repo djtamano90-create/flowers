@@ -722,8 +722,7 @@ nav{
       <div class="field">
         <label>תמונה</label>
         <div class="upload-tabs">
-          <button class="upload-tab on" onclick="switchUploadTab('file',this)">העלאת קובץ</button>
-          <button class="upload-tab" onclick="switchUploadTab('url',this)">קישור URL</button>
+          <button class="upload-tab on">העלאת קובץ מהמחשב</button>
         </div>
 
         <div id="upload-tab-file">
@@ -732,17 +731,14 @@ nav{
             <input type="file" id="af-img-file" accept="image/*" onchange="handleImgFile(this)" />
             <span class="upload-icon">📷</span>
             <p>לחץ או גרור תמונה לכאן</p>
-            <p style="font-size:.72rem;margin-top:.3rem">JPG, PNG, WEBP עד 5MB</p>
+            <p style="font-size:.72rem;margin-top:.3rem">JPG, PNG, WEBP — עד 1MB</p>
           </div>
-        </div>
-
-        <div id="upload-tab-url" style="display:none">
-          <div class="field-icon img-url-input">
-            <span class="icon" style="top:50%;transform:translateY(-50%)">🔗</span>
-            <input type="url" id="af-img-url" placeholder="https://example.com/flower.jpg"
-              oninput="previewUrl(this.value)" style="padding-left:2.4rem" />
+          <div id="upload-progress" style="display:none;margin-top:.5rem">
+            <div style="background:#f0e8e8;border-radius:50px;height:6px;overflow:hidden">
+              <div id="upload-bar" style="background:var(--rose);height:100%;width:0;transition:width .3s"></div>
+            </div>
+            <p style="font-size:.75rem;color:#aaa;margin-top:.3rem;text-align:center" id="upload-status">מעלה תמונה...</p>
           </div>
-          <img id="af-url-preview" class="img-preview" style="margin-top:.5rem" alt="תצוגה מקדימה" />
         </div>
       </div>
 
@@ -1443,40 +1439,77 @@ async function loadMyFlowers() {
 /* ═══════════════════════════════════════════
    ADD FLOWER
 ═══════════════════════════════════════════ */
-let afImgBase64 = null;
-let afUploadMode = 'file';
-
-function switchUploadTab(mode, btn) {
-  afUploadMode = mode;
-  document.querySelectorAll('.upload-tab').forEach(b => b.classList.remove('on'));
-  btn.classList.add('on');
-  document.getElementById('upload-tab-file').style.display = mode === 'file' ? 'block' : 'none';
-  document.getElementById('upload-tab-url').style.display  = mode === 'url'  ? 'block' : 'none';
-}
+const CLOUDINARY_CLOUD = 'dv3it27vr';
+const CLOUDINARY_PRESET = 'flowers_upload';
+let afUploadedImgUrl = null;
 
 function handleImgFile(input) {
   const file = input.files[0];
   if (!file) return;
-  if (file.size > 5 * 1024 * 1024) { alert('הקובץ גדול מדי — מקסימום 5MB'); return; }
+
+  // 1MB limit
+  if (file.size > 1 * 1024 * 1024) {
+    alert('הקובץ גדול מדי — מקסימום 1MB\nנסה לדחוס את התמונה לפני ההעלאה');
+    input.value = '';
+    return;
+  }
+
+  // Show preview immediately
   const reader = new FileReader();
   reader.onload = e => {
-    afImgBase64 = e.target.result;
     const prev = document.getElementById('af-img-preview');
-    prev.src = afImgBase64;
+    prev.src = e.target.result;
     prev.style.display = 'block';
-    document.getElementById('upload-area').style.display = 'none';
   };
   reader.readAsDataURL(file);
+
+  // Upload to Cloudinary
+  uploadToCloudinary(file);
 }
 
-function previewUrl(url) {
-  const prev = document.getElementById('af-url-preview');
-  if (url.startsWith('http')) {
-    prev.src = url;
-    prev.style.display = 'block';
-    prev.onerror = () => { prev.style.display = 'none'; };
-  } else {
-    prev.style.display = 'none';
+async function uploadToCloudinary(file) {
+  const progress = document.getElementById('upload-progress');
+  const bar      = document.getElementById('upload-bar');
+  const status   = document.getElementById('upload-status');
+  const area     = document.getElementById('upload-area');
+
+  area.style.display = 'none';
+  progress.style.display = 'block';
+  afUploadedImgUrl = null;
+
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', CLOUDINARY_PRESET);
+  formData.append('folder', 'flowers');
+
+  try {
+    // Simulate progress
+    let pct = 0;
+    const ticker = setInterval(() => {
+      pct = Math.min(pct + 8, 85);
+      bar.style.width = pct + '%';
+    }, 120);
+
+    const res = await fetch(
+      `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`,
+      { method: 'POST', body: formData }
+    );
+    clearInterval(ticker);
+
+    if (!res.ok) throw new Error('שגיאת העלאה');
+    const data = await res.json();
+
+    // Optimize URL — auto quality, width 600px
+    afUploadedImgUrl = data.secure_url.replace('/upload/', '/upload/q_auto,f_auto,w_600/');
+
+    bar.style.width = '100%';
+    status.textContent = '✓ התמונה הועלתה בהצלחה';
+    status.style.color = 'var(--sage)';
+  } catch (err) {
+    progress.style.display = 'none';
+    area.style.display = 'block';
+    afUploadedImgUrl = null;
+    alert('שגיאה בהעלאת התמונה — נסה שוב');
   }
 }
 
@@ -1492,24 +1525,18 @@ async function handleAddFlower() {
   const errEl   = document.getElementById('af-error');
   errEl.style.display = 'none';
 
-  let img = '';
-  if (afUploadMode === 'file') {
-    img = afImgBase64 || '';
-  } else {
-    img = document.getElementById('af-img-url').value.trim();
-  }
-
-  if (!name)  { errEl.textContent = 'נא להזין שם לפרח'; errEl.style.display='block'; return; }
-  if (!desc)  { errEl.textContent = 'נא להזין תיאור'; errEl.style.display='block'; return; }
-  if (!price) { errEl.textContent = 'נא להזין מחיר'; errEl.style.display='block'; return; }
-  if (!img)   { errEl.textContent = 'נא להוסיף תמונה'; errEl.style.display='block'; return; }
+  if (!name)              { errEl.textContent = 'נא להזין שם לפרח';    errEl.style.display='block'; return; }
+  if (!desc)              { errEl.textContent = 'נא להזין תיאור';       errEl.style.display='block'; return; }
+  if (!price)             { errEl.textContent = 'נא להזין מחיר';        errEl.style.display='block'; return; }
+  if (!afUploadedImgUrl)  { errEl.textContent = 'נא להמתין לסיום העלאת התמונה או להעלות תמונה'; errEl.style.display='block'; return; }
 
   const btn = document.querySelector('#page-add-flower .btn-signup');
   btn.textContent = 'מוסיף...'; btn.disabled = true;
 
   const { ok, data } = await apiFetch('/api/add-flower', {
     email: user.email,
-    name, desc, price, emoji, details, img,
+    name, desc, price, emoji, details,
+    img: afUploadedImgUrl,
     tags: ['colorful']
   });
 
@@ -1518,18 +1545,22 @@ async function handleAddFlower() {
   if (!ok) { errEl.textContent = data.error || 'שגיאה, נסה שוב'; errEl.style.display='block'; return; }
 
   // Reset form
-  document.getElementById('af-name').value = '';
-  document.getElementById('af-desc').value = '';
-  document.getElementById('af-price').value = '';
-  document.getElementById('af-emoji').value = '';
+  document.getElementById('af-name').value    = '';
+  document.getElementById('af-desc').value    = '';
+  document.getElementById('af-price').value   = '';
+  document.getElementById('af-emoji').value   = '';
   document.getElementById('af-details').value = '';
-  document.getElementById('af-img-url').value = '';
-  document.getElementById('af-img-preview').style.display = 'none';
-  document.getElementById('upload-area').style.display = 'block';
-  afImgBase64 = null;
+  document.getElementById('af-img-preview').style.display  = 'none';
+  document.getElementById('upload-area').style.display     = 'block';
+  document.getElementById('upload-progress').style.display = 'none';
+  document.getElementById('upload-bar').style.width        = '0';
+  document.getElementById('upload-status').textContent     = 'מעלה תמונה...';
+  document.getElementById('upload-status').style.color     = '';
+  document.getElementById('af-img-file').value = '';
+  afUploadedImgUrl = null;
 
   // Add to CATALOG dynamically
-  const newFlower = { name, desc, price, emoji, img, tags: ['colorful'], details };
+  const newFlower = { name, desc, price, emoji, img: afUploadedImgUrl || '', tags: ['colorful'], details };
   CATALOG.unshift(newFlower);
 
   alert('הפרח נוסף בהצלחה! 🌸');
