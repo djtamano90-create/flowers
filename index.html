@@ -202,6 +202,79 @@ nav{
 .flip-tag{font-size:.65rem;background:rgba(201,105,122,.1);color:var(--rose);padding:.16rem .5rem;border-radius:50px}
 .flip-desc-long{font-size:.78rem;color:#777;font-weight:300;line-height:1.55;margin-bottom:.5rem}
 .flip-hint{font-size:.62rem;color:#ccc;font-style:italic;margin-top:auto;text-align:center}
+/* ── PROFILE PAGE ── */
+#page-profile.active,
+#page-add-flower.active{display:block;min-height:100vh;padding:90px 1.5rem 3rem}
+.profile-inner,.add-flower-inner{max-width:860px;margin:0 auto}
+.profile-hero{
+  background:#fff;border-radius:20px;padding:2rem;
+  box-shadow:0 4px 20px var(--shadow);
+  display:flex;align-items:center;gap:1.5rem;
+  margin-bottom:2rem;flex-wrap:wrap;
+}
+.profile-avatar{
+  width:72px;height:72px;border-radius:50%;
+  background:rgba(201,105,122,.15);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--rose);flex-shrink:0;
+}
+.profile-name{font-family:'Playfair Display',serif;font-size:1.4rem;margin-bottom:.2rem}
+.profile-email{font-size:.83rem;color:#aaa;font-weight:300}
+.profile-details{
+  background:#fff;border-radius:20px;padding:1.5rem 2rem;
+  box-shadow:0 4px 20px var(--shadow);margin-bottom:2rem;
+}
+.profile-details h3{font-family:'Playfair Display',serif;font-size:1.1rem;margin-bottom:1rem}
+.detail-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.8rem}
+.detail-item{display:flex;flex-direction:column;gap:.2rem}
+.detail-label{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;color:#bbb;font-weight:500}
+.detail-value{font-size:.9rem;color:var(--charcoal)}
+.profile-section{margin-bottom:2rem}
+.profile-section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+.profile-section-header h3{font-family:'Playfair Display',serif;font-size:1.1rem}
+.btn-add-flower{
+  display:inline-flex;align-items:center;gap:.5rem;
+  background:var(--rose);color:#fff;border:none;
+  padding:.6rem 1.3rem;border-radius:50px;
+  font-family:'Heebo',sans-serif;font-size:.85rem;font-weight:500;
+  cursor:pointer;transition:all .2s;box-shadow:0 3px 12px rgba(201,105,122,.3);
+}
+.btn-add-flower:hover{background:#b05568;transform:translateY(-2px)}
+.profile-empty{
+  text-align:center;padding:2.5rem 1rem;
+  background:#fff;border-radius:16px;box-shadow:0 4px 16px var(--shadow);
+}
+.profile-empty span{font-size:2.5rem;display:block;margin-bottom:.7rem}
+.profile-empty p{color:#aaa;font-size:.88rem;font-weight:300}
+.add-flower-card{
+  background:#fff;border-radius:20px;padding:2rem 2.2rem;
+  box-shadow:0 4px 20px var(--shadow);
+}
+.add-flower-card h2{font-family:'Playfair Display',serif;font-size:1.5rem;margin-bottom:.3rem}
+.add-flower-card .sub{color:#aaa;font-size:.85rem;font-weight:300;margin-bottom:1.8rem}
+.img-upload-area{
+  border:2px dashed #e8d8da;border-radius:14px;padding:2rem;
+  text-align:center;cursor:pointer;transition:border-color .2s,background .2s;
+  background:#fdf9f9;margin-bottom:.5rem;position:relative;
+}
+.img-upload-area:hover{border-color:var(--rose);background:#fff5f6}
+.img-upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.img-upload-area .upload-icon{font-size:2rem;display:block;margin-bottom:.5rem}
+.img-upload-area p{font-size:.83rem;color:#bbb;font-weight:300;margin:0}
+.img-preview{width:100%;max-height:200px;object-fit:cover;border-radius:10px;display:none;margin-bottom:.5rem}
+.upload-tabs{display:flex;gap:.5rem;margin-bottom:.8rem}
+.upload-tab{
+  padding:.35rem .9rem;border-radius:50px;border:1.5px solid #e8d8da;
+  background:transparent;font-family:'Heebo',sans-serif;font-size:.78rem;
+  cursor:pointer;color:#888;transition:all .15s;
+}
+.upload-tab.on{background:var(--rose);border-color:var(--rose);color:#fff}
+.user-flower-badge{
+  display:inline-block;background:rgba(122,158,126,.12);
+  color:var(--sage);font-size:.65rem;padding:.15rem .5rem;
+  border-radius:50px;font-weight:500;margin-top:.3rem;
+}
+
 /* ── AUTH PAGES ── */
 #page-signup.active,
 #page-login.active,
@@ -541,6 +614,144 @@ nav{
   </div>
 </div>
 
+
+<!-- ════════════════ PROFILE ════════════════ -->
+<div id="page-profile" class="page">
+  <div class="profile-inner">
+    <button class="back-btn" onclick="goBack()">← חזור</button>
+
+    <!-- Hero card -->
+    <div class="profile-hero">
+      <div class="profile-avatar" id="profile-avatar">א</div>
+      <div>
+        <div class="profile-name" id="profile-fullname">שם משתמש</div>
+        <div class="profile-email" id="profile-email-display">email@example.com</div>
+      </div>
+      <div style="margin-right:auto">
+        <button class="btn-add-flower" onclick="goTo('page-add-flower')">+ הוסף פרח חדש</button>
+      </div>
+    </div>
+
+    <!-- Personal details -->
+    <div class="profile-details">
+      <h3>פרטים אישיים</h3>
+      <div class="detail-grid">
+        <div class="detail-item">
+          <span class="detail-label">שם פרטי</span>
+          <span class="detail-value" id="pd-fname">—</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">שם משפחה</span>
+          <span class="detail-value" id="pd-lname">—</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">תאריך לידה</span>
+          <span class="detail-value" id="pd-dob">—</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">מייל</span>
+          <span class="detail-value" id="pd-email">—</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">כתובת</span>
+          <span class="detail-value" id="pd-address">—</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">עיר</span>
+          <span class="detail-value" id="pd-city">—</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Liked flowers -->
+    <div class="profile-section">
+      <div class="profile-section-header">
+        <h3>❤️ פרחים שאהבת</h3>
+        <span id="liked-count" style="font-size:.8rem;color:#bbb"></span>
+      </div>
+      <div id="profile-liked-grid" class="flower-grid"></div>
+    </div>
+
+    <!-- My flowers -->
+    <div class="profile-section">
+      <div class="profile-section-header">
+        <h3>🌱 הפרחים שלי</h3>
+        <span id="my-flowers-count" style="font-size:.8rem;color:#bbb"></span>
+      </div>
+      <div id="profile-my-flowers-grid" class="flower-grid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════ ADD FLOWER ════════════════ -->
+<div id="page-add-flower" class="page">
+  <div class="add-flower-inner">
+    <button class="back-btn" onclick="goTo('page-profile')">← חזור לפרופיל</button>
+    <div class="add-flower-card">
+      <h2>הוספת פרח חדש 🌸</h2>
+      <p class="sub">הפרח שתוסיף יופיע בקטלוג ובפרופיל שלך</p>
+
+      <div class="field">
+        <label>שם הפרח</label>
+        <input type="text" id="af-name" placeholder="למשל: ורד שחור" />
+      </div>
+
+      <div class="field">
+        <label>תיאור קצר</label>
+        <input type="text" id="af-desc" placeholder="למשל: נדיר ומסתורי" />
+      </div>
+
+      <div class="signup-row">
+        <div class="field">
+          <label>מחיר</label>
+          <input type="text" id="af-price" placeholder="₪49 לזר" />
+        </div>
+        <div class="field">
+          <label>אמוג'י</label>
+          <input type="text" id="af-emoji" placeholder="🌹" maxlength="2" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label>פרטים נוספים</label>
+        <textarea id="af-details" rows="3"
+          style="border:1.5px solid #e8e0d8;border-radius:10px;padding:.65rem .9rem;font-family:'Heebo',sans-serif;font-size:.9rem;color:var(--charcoal);background:#faf9f7;outline:none;resize:vertical;width:100%;transition:border-color .2s"
+          placeholder="ספר על הפרח — מקורו, עמידות, מתאים ל..."></textarea>
+      </div>
+
+      <div class="field">
+        <label>תמונה</label>
+        <div class="upload-tabs">
+          <button class="upload-tab on" onclick="switchUploadTab('file',this)">העלאת קובץ</button>
+          <button class="upload-tab" onclick="switchUploadTab('url',this)">קישור URL</button>
+        </div>
+
+        <div id="upload-tab-file">
+          <img id="af-img-preview" class="img-preview" alt="תצוגה מקדימה" />
+          <div class="img-upload-area" id="upload-area">
+            <input type="file" id="af-img-file" accept="image/*" onchange="handleImgFile(this)" />
+            <span class="upload-icon">📷</span>
+            <p>לחץ או גרור תמונה לכאן</p>
+            <p style="font-size:.72rem;margin-top:.3rem">JPG, PNG, WEBP עד 5MB</p>
+          </div>
+        </div>
+
+        <div id="upload-tab-url" style="display:none">
+          <div class="field-icon img-url-input">
+            <span class="icon" style="top:50%;transform:translateY(-50%)">🔗</span>
+            <input type="url" id="af-img-url" placeholder="https://example.com/flower.jpg"
+              oninput="previewUrl(this.value)" style="padding-left:2.4rem" />
+          </div>
+          <img id="af-url-preview" class="img-preview" style="margin-top:.5rem" alt="תצוגה מקדימה" />
+        </div>
+      </div>
+
+      <div id="af-error" style="color:#c9697a;font-size:.82rem;margin-bottom:.7rem;display:none;text-align:center"></div>
+      <button class="btn-signup" onclick="handleAddFlower()">✦ הוסף לקטלוג</button>
+    </div>
+  </div>
+</div>
+
 <script>
 /* ═══════════════════════════════════════════
    DATA
@@ -633,6 +844,7 @@ let swiping = false; // lock during animation
    NAVIGATION
 ═══════════════════════════════════════════ */
 function goTo(pageId) {
+  if (pageId === 'page-profile') { openProfile(); return; }
   const cur = document.querySelector('.page.active');
   if (cur) prevPage = cur.id;
   cur && cur.classList.remove('active');
@@ -961,7 +1173,7 @@ function updateNavUI() {
   const nav = document.getElementById('nav-auth');
   if (user) {
     nav.innerHTML = `
-      <span style="font-size:.82rem;color:#888;font-weight:300">שלום, ${user.fname}</span>
+      <span style="font-size:.82rem;color:#888;font-weight:300;cursor:pointer" onclick="goTo('page-profile')">👤 ${user.fname}</span>
       <button class="nav-btn" onclick="goTo('page-swipe')">התחל להתאים ✦</button>
       <button class="nav-btn" style="background:transparent;color:var(--rose);border:1.5px solid var(--rose)" onclick="handleLogout()">יציאה</button>`;
   } else {
@@ -1165,6 +1377,164 @@ const urlToken  = urlParams.get('reset');
 if (urlToken) handleResetLink(urlToken);
 // Clean URL
 if (urlToken) window.history.replaceState({}, '', window.location.pathname);
+
+
+/* ═══════════════════════════════════════════
+   PROFILE
+═══════════════════════════════════════════ */
+async function openProfile() {
+  const user = currentUser();
+  if (!user) { goTo('page-login'); return; }
+
+  // Fetch full user data from API
+  const res = await fetch('/api/get-user?email=' + encodeURIComponent(user.email));
+  const data = res.ok ? await res.json() : {};
+  const u = data.user || {};
+
+  // Avatar initials
+  const initials = (u.fname||user.fname||'?')[0] + (u.lname||'')[0];
+  document.getElementById('profile-avatar').textContent = initials.toUpperCase();
+  document.getElementById('profile-fullname').textContent = (u.fname||'') + ' ' + (u.lname||'');
+  document.getElementById('profile-email-display').textContent = user.email;
+  document.getElementById('pd-fname').textContent  = u.fname  || '—';
+  document.getElementById('pd-lname').textContent  = u.lname  || '—';
+  document.getElementById('pd-email').textContent  = u.email  || '—';
+  document.getElementById('pd-city').textContent   = u.city   || '—';
+  document.getElementById('pd-address').textContent= u.street || '—';
+
+  // Format DOB
+  if (u.dob) {
+    const d = new Date(u.dob);
+    document.getElementById('pd-dob').textContent =
+      d.toLocaleDateString('he-IL', {day:'2-digit', month:'2-digit', year:'numeric'});
+  }
+
+  // Liked flowers (from session)
+  const likedGrid = document.getElementById('profile-liked-grid');
+  if (liked.length) {
+    document.getElementById('liked-count').textContent = liked.length + ' פרחים';
+    likedGrid.innerHTML = liked.map(tileHTML).join('');
+  } else {
+    document.getElementById('liked-count').textContent = '';
+    likedGrid.innerHTML = `<div class="profile-empty"><span>🌸</span><p>עדיין לא אהבת פרחים.<br/>לחץ <a href="#" onclick="goTo('page-swipe');return false" style="color:var(--rose)">כאן</a> כדי להתחיל</p></div>`;
+  }
+
+  // My flowers
+  await loadMyFlowers();
+  goTo('page-profile');
+}
+
+async function loadMyFlowers() {
+  const user = currentUser();
+  const grid = document.getElementById('profile-my-flowers-grid');
+  const res = await fetch('/api/get-flowers?email=' + encodeURIComponent(user.email));
+  const data = res.ok ? await res.json() : { flowers: [] };
+  const myFlowers = data.flowers || [];
+
+  document.getElementById('my-flowers-count').textContent = myFlowers.length ? myFlowers.length + ' פרחים' : '';
+
+  if (!myFlowers.length) {
+    grid.innerHTML = `<div class="profile-empty"><span>🌱</span><p>עדיין לא הוספת פרחים.<br/>לחץ על "הוסף פרח חדש" כדי להתחיל!</p></div>`;
+    return;
+  }
+  grid.innerHTML = myFlowers.map(f => tileHTML({...f, _userFlower: true})).join('');
+}
+
+/* ═══════════════════════════════════════════
+   ADD FLOWER
+═══════════════════════════════════════════ */
+let afImgBase64 = null;
+let afUploadMode = 'file';
+
+function switchUploadTab(mode, btn) {
+  afUploadMode = mode;
+  document.querySelectorAll('.upload-tab').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('upload-tab-file').style.display = mode === 'file' ? 'block' : 'none';
+  document.getElementById('upload-tab-url').style.display  = mode === 'url'  ? 'block' : 'none';
+}
+
+function handleImgFile(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) { alert('הקובץ גדול מדי — מקסימום 5MB'); return; }
+  const reader = new FileReader();
+  reader.onload = e => {
+    afImgBase64 = e.target.result;
+    const prev = document.getElementById('af-img-preview');
+    prev.src = afImgBase64;
+    prev.style.display = 'block';
+    document.getElementById('upload-area').style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+}
+
+function previewUrl(url) {
+  const prev = document.getElementById('af-url-preview');
+  if (url.startsWith('http')) {
+    prev.src = url;
+    prev.style.display = 'block';
+    prev.onerror = () => { prev.style.display = 'none'; };
+  } else {
+    prev.style.display = 'none';
+  }
+}
+
+async function handleAddFlower() {
+  const user = currentUser();
+  if (!user) { goTo('page-login'); return; }
+
+  const name    = document.getElementById('af-name').value.trim();
+  const desc    = document.getElementById('af-desc').value.trim();
+  const price   = document.getElementById('af-price').value.trim();
+  const emoji   = document.getElementById('af-emoji').value.trim() || '🌸';
+  const details = document.getElementById('af-details').value.trim();
+  const errEl   = document.getElementById('af-error');
+  errEl.style.display = 'none';
+
+  let img = '';
+  if (afUploadMode === 'file') {
+    img = afImgBase64 || '';
+  } else {
+    img = document.getElementById('af-img-url').value.trim();
+  }
+
+  if (!name)  { errEl.textContent = 'נא להזין שם לפרח'; errEl.style.display='block'; return; }
+  if (!desc)  { errEl.textContent = 'נא להזין תיאור'; errEl.style.display='block'; return; }
+  if (!price) { errEl.textContent = 'נא להזין מחיר'; errEl.style.display='block'; return; }
+  if (!img)   { errEl.textContent = 'נא להוסיף תמונה'; errEl.style.display='block'; return; }
+
+  const btn = document.querySelector('#page-add-flower .btn-signup');
+  btn.textContent = 'מוסיף...'; btn.disabled = true;
+
+  const { ok, data } = await apiFetch('/api/add-flower', {
+    email: user.email,
+    name, desc, price, emoji, details, img,
+    tags: ['colorful']
+  });
+
+  btn.textContent = '✦ הוסף לקטלוג'; btn.disabled = false;
+
+  if (!ok) { errEl.textContent = data.error || 'שגיאה, נסה שוב'; errEl.style.display='block'; return; }
+
+  // Reset form
+  document.getElementById('af-name').value = '';
+  document.getElementById('af-desc').value = '';
+  document.getElementById('af-price').value = '';
+  document.getElementById('af-emoji').value = '';
+  document.getElementById('af-details').value = '';
+  document.getElementById('af-img-url').value = '';
+  document.getElementById('af-img-preview').style.display = 'none';
+  document.getElementById('upload-area').style.display = 'block';
+  afImgBase64 = null;
+
+  // Add to CATALOG dynamically
+  const newFlower = { name, desc, price, emoji, img, tags: ['colorful'], details };
+  CATALOG.unshift(newFlower);
+
+  alert('הפרח נוסף בהצלחה! 🌸');
+  openProfile();
+}
 
 /* ═══════════════════════════════════════════
    INIT
