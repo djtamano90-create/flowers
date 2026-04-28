@@ -1169,9 +1169,11 @@ function updateNavUI() {
   const nav = document.getElementById('nav-auth');
   if (user) {
     nav.innerHTML = `
-      <span style="font-size:.82rem;color:#888;font-weight:300;cursor:pointer" onclick="goTo('page-profile')">👤 ${user.fname}</span>
+      <button class="nav-btn" style="background:transparent;color:var(--rose);border:1.5px solid var(--rose);display:inline-flex;align-items:center;gap:.4rem" onclick="goTo('page-profile')">
+        <span style="font-size:1rem">👤</span> ${user.fname}
+      </button>
       <button class="nav-btn" onclick="goTo('page-swipe')">התחל להתאים ✦</button>
-      <button class="nav-btn" style="background:transparent;color:var(--rose);border:1.5px solid var(--rose)" onclick="handleLogout()">יציאה</button>`;
+      <button class="nav-btn" style="background:transparent;color:#888;border:1.5px solid #ddd" onclick="handleLogout()">יציאה</button>`;
   } else {
     nav.innerHTML = `
       <button class="nav-btn" style="background:transparent;color:var(--rose);border:1.5px solid var(--rose)" onclick="goTo('page-signup')">הרשמה</button>
