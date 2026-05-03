@@ -1,9 +1,9 @@
-
 {
   "name": "flowers",
   "version": "1.0.0",
   "dependencies": {
     "resend": "^3.2.0",
-    "ioredis": "^5.3.2"
+    "ioredis": "^5.3.2",
+    "bcryptjs": "^2.4.3"
   }
 }
