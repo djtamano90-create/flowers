@@ -536,11 +536,11 @@ nav{
       <div class="signup-row">
         <div class="field">
           <label>שם פרטי</label>
-          <input type="text" id="fname" placeholder="ישראל" />
+          <input type="text" id="fname" placeholder="ישראל" maxlength="50" />
         </div>
         <div class="field">
           <label>שם משפחה</label>
-          <input type="text" id="lname" placeholder="ישראלי" />
+          <input type="text" id="lname" placeholder="ישראלי" maxlength="50" />
         </div>
       </div>
 
@@ -569,11 +569,11 @@ nav{
       <div class="signup-row">
         <div class="field">
           <label>עיר</label>
-          <input type="text" id="city" placeholder="תל אביב" />
+          <input type="text" id="city" placeholder="תל אביב" maxlength="50" oninput="this.value=this.value.replace(/[0-9]/g,'')" />
         </div>
         <div class="field">
           <label>מיקוד</label>
-          <input type="text" id="zip" placeholder="6100000" inputmode="numeric" />
+          <input type="text" id="zip" placeholder="6100000" inputmode="numeric" maxlength="7" oninput="this.value=this.value.replace(/[^0-9]/g,'')" />
         </div>
       </div>
 
@@ -583,10 +583,11 @@ nav{
         <label>סיסמה</label>
         <div class="pw-wrap field-icon">
           <span class="icon">🔒</span>
-          <input type="password" id="password" placeholder="לפחות 8 תווים" />
+          <input type="password" id="password" placeholder="אות גדולה, קטנה ומספר" maxlength="128" />
           <button class="pw-toggle" onclick="togglePw('password',this)">👁</button>
         </div>
         <span class="field-note" id="pw-strength"></span>
+        <span class="field-note" style="color:#bbb">חייבת לכלול: אות גדולה, אות קטנה ומספר</span>
       </div>
 
       <div class="field">
@@ -598,6 +599,9 @@ nav{
         </div>
       </div>
 
+      <!-- Honeypot: hidden from users, bots will fill this -->
+      <input type="text" id="signup-honeypot" name="website" autocomplete="off"
+        style="position:absolute;left:-9999px;opacity:0;height:0;width:0;pointer-events:none" tabindex="-1" />
       <button class="btn-signup" onclick="handleSignup()">✦ הצטרף עכשיו</button>
 
       <p class="signup-login">כבר יש לך חשבון? <a href="#" onclick="goTo('page-login');return false">כניסה</a></p>
@@ -753,72 +757,72 @@ nav{
    DATA
 ═══════════════════════════════════════════ */
 const SWIPE_DECK = [
-  {name:"ורד אדום קלאסי",   desc:"רומנטי ועוצמתי",   price:"₪49 לזר", emoji:"🌹", tags:["romantic","classic","red","fragrant"],   img:"https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=400&q=80"},
-  {name:"שושנה לבנה",       desc:"טהורה ועדינה",     price:"₪39 לזר", emoji:"🤍", tags:["delicate","classic","white","elegant"],   img:"https://images.unsplash.com/photo-1490750967868-88df5691cc9f?w=400&q=80"},
-  {name:"חמנייה",            desc:"שמחה ואנרגטית",   price:"₪29 לזר", emoji:"🌻", tags:["cheerful","bright","yellow","bold"],      img:"https://images.unsplash.com/photo-1471194402529-8e0f5cf8f08c?w=400&q=80"},
-  {name:"לבנדר",             desc:"מרגיע ומריח",     price:"₪35 לזר", emoji:"💜", tags:["fragrant","delicate","purple","calming"], img:"https://images.unsplash.com/photo-1533038590840-1cde6e668a91?w=400&q=80"},
-  {name:"אורכידאה סגולה",   desc:"יוקרתית ומיוחדת", price:"₪89 לזר", emoji:"🌸", tags:["elegant","exotic","purple","luxury"],     img:"https://images.unsplash.com/photo-1566737236500-c8ac43014a67?w=400&q=80"},
-  {name:"צבעוני",            desc:"צבעוני ועליז",    price:"₪25 לזר", emoji:"🌷", tags:["cheerful","bright","colorful","bold"],    img:"https://images.unsplash.com/photo-1462275646964-a0e3386b89fa?w=400&q=80"},
-  {name:"דהליה סגולה",      desc:"מרשים ומגוון",    price:"₪55 לזר", emoji:"🌺", tags:["bold","colorful","exotic","dramatic"],    img:"https://images.unsplash.com/photo-1508610048659-a06b669e3321?w=400&q=80"},
-  {name:"פאוניה ורודה",     desc:"רכה ורומנטית",    price:"₪65 לזר", emoji:"🌸", tags:["romantic","delicate","pink","elegant"],   img:"https://images.unsplash.com/photo-1587530207272-c9b3c6d6f66e?w=400&q=80"},
-  {name:"מרגנית לבנה",      desc:"קלילה וחיננית",   price:"₪22 לזר", emoji:"🌼", tags:["delicate","white","cheerful","classic"],  img:"https://images.unsplash.com/photo-1455659817273-f96807779a8a?w=400&q=80"},
-  {name:"ליליום כתום",      desc:"גדול ומרשים",     price:"₪59 לזר", emoji:"🧡", tags:["bold","orange","fragrant","dramatic"],    img:"https://images.unsplash.com/photo-1444930694458-01babf71870c?w=400&q=80"},
+  {name:"ורד אדום קלאסי",   desc:"רומנטי ועוצמתי",   price:"₪49 לזר", emoji:"🌹", tags:["romantic","classic","red","fragrant"],   img:"https://images.pexels.com/photos/56866/garden-rose-red-pink-56866.jpeg?auto=compress&cs=tinysrgb&w=400"},
+  {name:"שושנה לבנה",       desc:"טהורה ועדינה",     price:"₪39 לזר", emoji:"🤍", tags:["delicate","classic","white","elegant"],   img:"https://images.pexels.com/photos/931177/pexels-photo-931177.jpeg?auto=compress&cs=tinysrgb&w=400"},
+  {name:"חמנייה",            desc:"שמחה ואנרגטית",   price:"₪29 לזר", emoji:"🌻", tags:["cheerful","bright","yellow","bold"],      img:"https://images.pexels.com/photos/46216/sunflower-flowers-bright-yellow-46216.jpeg?auto=compress&cs=tinysrgb&w=400"},
+  {name:"לבנדר",             desc:"מרגיע ומריח",     price:"₪35 לזר", emoji:"💜", tags:["fragrant","delicate","purple","calming"], img:"https://images.pexels.com/photos/207518/pexels-photo-207518.jpeg?auto=compress&cs=tinysrgb&w=400"},
+  {name:"אורכידאה סגולה",   desc:"יוקרתית ומיוחדת", price:"₪89 לזר", emoji:"🌸", tags:["elegant","exotic","purple","luxury"],     img:"https://images.pexels.com/photos/931177/pexels-photo-931177.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop"},
+  {name:"צבעוני",            desc:"צבעוני ועליז",    price:"₪25 לזר", emoji:"🌷", tags:["cheerful","bright","colorful","bold"],    img:"https://images.pexels.com/photos/36729/tulip-flower-bloom-pink.jpg?auto=compress&cs=tinysrgb&w=400"},
+  {name:"דהליה סגולה",      desc:"מרשים ומגוון",    price:"₪55 לזר", emoji:"🌺", tags:["bold","colorful","exotic","dramatic"],    img:"https://images.pexels.com/photos/931177/pexels-photo-931177.jpeg?auto=compress&cs=tinysrgb&w=400&h=280&fit=crop"},
+  {name:"פאוניה ורודה",     desc:"רכה ורומנטית",    price:"₪65 לזר", emoji:"🌸", tags:["romantic","delicate","pink","elegant"],   img:"https://images.pexels.com/photos/5944919/pexels-photo-5944919.jpeg?auto=compress&cs=tinysrgb&w=400"},
+  {name:"מרגנית לבנה",      desc:"קלילה וחיננית",   price:"₪22 לזר", emoji:"🌼", tags:["delicate","white","cheerful","classic"],  img:"https://images.pexels.com/photos/1477166/pexels-photo-1477166.jpeg?auto=compress&cs=tinysrgb&w=400"},
+  {name:"ליליום כתום",      desc:"גדול ומרשים",     price:"₪59 לזר", emoji:"🧡", tags:["bold","orange","fragrant","dramatic"],    img:"https://images.pexels.com/photos/163696/pexels-photo-163696.jpeg?auto=compress&cs=tinysrgb&w=400"},
 ];
 
 const CATALOG = [
-  {name:"ורד ורוד",          desc:"עדין ורומנטי",     price:"₪45 לזר", emoji:"🌹", tags:["romantic","pink","classic","fragrant"],         img:"https://images.unsplash.com/photo-1490750967868-88df5691cc9f?w=300&q=75"},
-  {name:"ורד לבן",           desc:"נקי ואלגנטי",      price:"₪48 לזר", emoji:"🤍", tags:["romantic","white","classic","elegant"],          img:"https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=300&q=75"},
-  {name:"ורד שמנת",          desc:"רך ומושקע",        price:"₪52 לזר", emoji:"🌸", tags:["romantic","white","elegant","fragrant"],         img:"https://images.unsplash.com/photo-1587530207272-c9b3c6d6f66e?w=300&q=75"},
-  {name:"ורד כתום",          desc:"נלהב ואנרגטי",     price:"₪46 לזר", emoji:"🧡", tags:["bold","orange","classic","cheerful"],            img:"https://images.unsplash.com/photo-1444930694458-01babf71870c?w=300&q=75"},
-  {name:"ורד צהוב",          desc:"ידידותי ואופטימי", price:"₪44 לזר", emoji:"🌼", tags:["cheerful","yellow","classic","bright"],          img:"https://images.unsplash.com/photo-1462275646964-a0e3386b89fa?w=300&q=75"},
-  {name:"פאוניה לבנה",      desc:"שלווה ומרשימה",    price:"₪70 לזר", emoji:"🤍", tags:["elegant","white","delicate","fragrant","luxury"],img:"https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?w=300&q=75"},
-  {name:"פאוניה אדומה",     desc:"סוערת ועוצמתית",   price:"₪72 לזר", emoji:"🌺", tags:["romantic","red","bold","fragrant","luxury"],     img:"https://images.unsplash.com/photo-1548094990-c16ca90f1f0d?w=300&q=75"},
-  {name:"אמריליס אדום",     desc:"דרמטי ועוצמתי",    price:"₪75 לזר", emoji:"🌹", tags:["dramatic","bold","red","romantic","luxury"],     img:"https://images.unsplash.com/photo-1533038590840-1cde6e668a91?w=300&q=75"},
-  {name:"יסמין לבן",        desc:"ניחוח שמימי",       price:"₪55 לזר", emoji:"🤍", tags:["fragrant","delicate","white","calming","elegant"],img:"https://images.unsplash.com/photo-1508610048659-a06b669e3321?w=300&q=75"},
-  {name:"ורד סגול",         desc:"מסתורי ומיוחד",    price:"₪59 לזר", emoji:"💜", tags:["exotic","purple","elegant","dramatic"],          img:"https://images.unsplash.com/photo-1566737236500-c8ac43014a67?w=300&q=75"},
-  {name:"אירוס סגול",       desc:"ייחודי ומרהיב",    price:"₪42 לזר", emoji:"💜", tags:["exotic","purple","elegant","dramatic"],          img:"https://images.unsplash.com/photo-1533038590840-1cde6e668a91?w=300&q=75"},
-  {name:"שושן הבקעות",      desc:"ניחוח קלאסי",       price:"₪38 לזר", emoji:"🤍", tags:["fragrant","white","delicate","classic"],         img:"https://images.unsplash.com/photo-1490750967868-88df5691cc9f?w=300&q=75"},
-  {name:"אגפנתוס כחול",     desc:"כחול ועמוק",        price:"₪60 לזר", emoji:"💙", tags:["exotic","purple","bold","dramatic"],             img:"https://images.unsplash.com/photo-1462275646964-a0e3386b89fa?w=300&q=75"},
-  {name:"לוונדר אנגלי",     desc:"ריח שדות",          price:"₪33 לזר", emoji:"💜", tags:["fragrant","purple","calming","delicate"],        img:"https://images.unsplash.com/photo-1471194402529-8e0f5cf8f08c?w=300&q=75"},
-  {name:"מנטה פרחונית",     desc:"רענן ומרגיע",       price:"₪28 לזר", emoji:"🌿", tags:["calming","delicate","fragrant","white"],         img:"https://images.unsplash.com/photo-1455659817273-f96807779a8a?w=300&q=75"},
-  {name:"חמנייה ענקית",     desc:"נוכחות מלאה",       price:"₪35 לזר", emoji:"🌻", tags:["cheerful","yellow","bold","bright"],             img:"https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=300&q=75"},
-  {name:"זזיניה צבעונית",   desc:"קיץ חגיגי",         price:"₪26 לזר", emoji:"🌺", tags:["cheerful","colorful","bold","bright"],           img:"https://images.unsplash.com/photo-1508610048659-a06b669e3321?w=300&q=75"},
-  {name:"קוסמוס ורוד",      desc:"קל ואוורירי",       price:"₪24 לזר", emoji:"🌸", tags:["delicate","pink","cheerful","bright"],           img:"https://images.unsplash.com/photo-1587530207272-c9b3c6d6f66e?w=300&q=75"},
-  {name:"טגטס כתום",        desc:"חם ומחמם",          price:"₪20 לזר", emoji:"🧡", tags:["cheerful","orange","bold","bright"],             img:"https://images.unsplash.com/photo-1444930694458-01babf71870c?w=300&q=75"},
-  {name:"ורד מיני צהוב",    desc:"מתוק ועליז",        price:"₪30 לזר", emoji:"🌼", tags:["cheerful","yellow","delicate","bright"],         img:"https://images.unsplash.com/photo-1590598016509-bce9e90a3ded?w=300&q=75"},
-  {name:"אורכידאה לבנה",   desc:"פאר ולוקסוס",       price:"₪95 לזר", emoji:"🤍", tags:["luxury","elegant","white","exotic"],             img:"https://images.unsplash.com/photo-1566737236500-c8ac43014a67?w=300&q=75"},
-  {name:"אורכידאה ורודה",  desc:"מעוגן ונדיר",        price:"₪98 לזר", emoji:"🌸", tags:["luxury","elegant","pink","exotic"],              img:"https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?w=300&q=75"},
-  {name:"פרוטאה",           desc:"אקזוטי ועוצמתי",   price:"₪110 לזר",emoji:"🌺", tags:["exotic","dramatic","luxury","bold"],             img:"https://images.unsplash.com/photo-1548094990-c16ca90f1f0d?w=300&q=75"},
-  {name:"הליקוניה",         desc:"טרופי ומרהיב",      price:"₪105 לזר",emoji:"🧡", tags:["exotic","orange","dramatic","luxury"],           img:"https://images.unsplash.com/photo-1533038590840-1cde6e668a91?w=300&q=75"},
-  {name:"ברומליה אדומה",    desc:"מיוחד במינו",       price:"₪88 לזר", emoji:"🌹", tags:["exotic","red","dramatic","luxury"],              img:"https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=300&q=75"},
-  {name:"צבעוני ורוד",      desc:"שמח ומרגש",         price:"₪27 לזר", emoji:"🌷", tags:["cheerful","pink","bright","delicate"],           img:"https://images.unsplash.com/photo-1462275646964-a0e3386b89fa?w=300&q=75"},
-  {name:"ליליום ורוד",      desc:"נשגב ומרשים",       price:"₪65 לזר", emoji:"🌸", tags:["elegant","pink","fragrant","bold"],              img:"https://images.unsplash.com/photo-1455659817273-f96807779a8a?w=300&q=75"},
-  {name:"אסטרומריה ורודה", desc:"ארוך חיים",          price:"₪32 לזר", emoji:"🌸", tags:["delicate","pink","cheerful","elegant"],          img:"https://images.unsplash.com/photo-1587530207272-c9b3c6d6f66e?w=300&q=75"},
-  {name:"קמליה ורודה",      desc:"רשמי ועשיר",        price:"₪78 לזר", emoji:"🌸", tags:["elegant","pink","luxury","classic"],             img:"https://images.unsplash.com/photo-1590598016509-bce9e90a3ded?w=300&q=75"},
-  {name:"פלוקס ורוד",       desc:"קיצי ומשוחרר",      price:"₪23 לזר", emoji:"🌸", tags:["cheerful","pink","bright","delicate"],           img:"https://images.unsplash.com/photo-1508610048659-a06b669e3321?w=300&q=75"},
-  {name:"שושנת המדבר",      desc:"עמיד ויפהפה",       price:"₪44 לזר", emoji:"🤍", tags:["delicate","white","elegant","calming"],          img:"https://images.unsplash.com/photo-1566737236500-c8ac43014a67?w=300&q=75"},
-  {name:"ורד שלג",          desc:"קר ונקי",            price:"₪50 לזר", emoji:"🤍", tags:["elegant","white","classic","fragrant"],          img:"https://images.unsplash.com/photo-1490750967868-88df5691cc9f?w=300&q=75"},
-  {name:"גרדניה",           desc:"ריח עז ויפה",        price:"₪62 לזר", emoji:"🤍", tags:["fragrant","white","elegant","luxury"],           img:"https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?w=300&q=75"},
-  {name:"מגנוליה לבנה",    desc:"עצמאי ומרשים",       price:"₪85 לזר", emoji:"🤍", tags:["luxury","white","dramatic","elegant"],           img:"https://images.unsplash.com/photo-1548094990-c16ca90f1f0d?w=300&q=75"},
-  {name:"ספיראה לבן",       desc:"עדין כשלג",          price:"₪29 לזר", emoji:"🤍", tags:["delicate","white","calming","classic"],          img:"https://images.unsplash.com/photo-1455659817273-f96807779a8a?w=300&q=75"},
-  {name:"פרסיה צהובה",      desc:"בוהק ומחמם",         price:"₪37 לזר", emoji:"🌼", tags:["bright","yellow","cheerful","bold"],             img:"https://images.unsplash.com/photo-1471194402529-8e0f5cf8f08c?w=300&q=75"},
-  {name:"אכילאה צהובה",     desc:"שדה פרחים",          price:"₪25 לזר", emoji:"🌼", tags:["cheerful","yellow","bright","delicate"],         img:"https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=300&q=75"},
-  {name:"קרווה",            desc:"מסתורי ויפה",        price:"₪41 לזר", emoji:"🌼", tags:["exotic","yellow","dramatic","elegant"],          img:"https://images.unsplash.com/photo-1462275646964-a0e3386b89fa?w=300&q=75"},
-  {name:"דפנה צהובה",       desc:"עדין ועשיר",         price:"₪48 לזר", emoji:"🌼", tags:["fragrant","yellow","delicate","elegant"],        img:"https://images.unsplash.com/photo-1590598016509-bce9e90a3ded?w=300&q=75"},
-  {name:"שמשון",            desc:"מזהיר וחיובי",       price:"₪33 לזר", emoji:"☀️", tags:["cheerful","yellow","bold","bright"],             img:"https://images.unsplash.com/photo-1444930694458-01babf71870c?w=300&q=75"},
-  {name:"דהליה שחורה",      desc:"מסתורי ועז",         price:"₪80 לזר", emoji:"🖤", tags:["dramatic","exotic","bold"],                      img:"https://images.unsplash.com/photo-1508610048659-a06b669e3321?w=300&q=75"},
-  {name:"פרפר כחול",        desc:"נדיר ויפהפה",        price:"₪92 לזר", emoji:"💙", tags:["exotic","dramatic","luxury","bold"],             img:"https://images.unsplash.com/photo-1533038590840-1cde6e668a91?w=300&q=75"},
-  {name:"זנגביל פרחוני",   desc:"טרופי וחי",           price:"₪76 לזר", emoji:"🌺", tags:["exotic","colorful","dramatic","bold"],           img:"https://images.unsplash.com/photo-1548094990-c16ca90f1f0d?w=300&q=75"},
-  {name:"ספת הגבעות",       desc:"פראי ועוצמתי",       price:"₪55 לזר", emoji:"🌿", tags:["dramatic","bold","calming","exotic"],            img:"https://images.unsplash.com/photo-1471194402529-8e0f5cf8f08c?w=300&q=75"},
-  {name:"נרקיס כחול",       desc:"חלומי ורך",          price:"₪67 לזר", emoji:"💙", tags:["exotic","purple","elegant","delicate"],          img:"https://images.unsplash.com/photo-1566737236500-c8ac43014a67?w=300&q=75"},
-  {name:"אנמון אדום",       desc:"פראי וסוחף",         price:"₪38 לזר", emoji:"🌹", tags:["dramatic","red","bold","classic"],               img:"https://images.unsplash.com/photo-1518895949257-7621c3c786d7?w=300&q=75"},
-  {name:"רניקולוס ורוד",   desc:"מעוגל ועדין",         price:"₪43 לזר", emoji:"🌸", tags:["romantic","pink","delicate","elegant"],          img:"https://images.unsplash.com/photo-1587530207272-c9b3c6d6f66e?w=300&q=75"},
-  {name:"לוטוס לבן",        desc:"רוחני ונדיר",        price:"₪120 לזר",emoji:"🪷", tags:["luxury","white","exotic","calming","elegant"],   img:"https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?w=300&q=75"},
-  {name:"כלנית אדומה",      desc:"ישראלי ואהוב",       price:"₪22 לזר", emoji:"🌹", tags:["classic","red","bright","cheerful"],             img:"https://images.unsplash.com/photo-1462275646964-a0e3386b89fa?w=300&q=75"},
-  {name:"נרקיס צהוב",       desc:"אביב ושמחה",         price:"₪28 לזר", emoji:"🌼", tags:["cheerful","yellow","bright","classic","fragrant"],img:"https://images.unsplash.com/photo-1455659817273-f96807779a8a?w=300&q=75"},
-  {name:"כרכום סגול",       desc:"עדין ומשמח",         price:"₪31 לזר", emoji:"💜", tags:["delicate","purple","cheerful","calming"],        img:"https://images.unsplash.com/photo-1533038590840-1cde6e668a91?w=300&q=75"},
-  {name:"פרג אדום",         desc:"עז ומרגש",            price:"₪26 לזר", emoji:"🌹", tags:["dramatic","red","bold","bright"],                img:"https://images.unsplash.com/photo-1548094990-c16ca90f1f0d?w=300&q=75"},
-  {name:"טיטוניה כתומה",   desc:"חם וכובש",            price:"₪34 לזר", emoji:"🧡", tags:["bold","orange","bright","cheerful"],             img:"https://images.unsplash.com/photo-1444930694458-01babf71870c?w=300&q=75"},
+  {name:"ורד ורוד",          desc:"עדין ורומנטי",     price:"₪45 לזר", emoji:"🌹", tags:["romantic","pink","classic","fragrant"],         img:"https://images.pexels.com/photos/931177/pexels-photo-931177.jpeg?auto=compress&cs=tinysrgb&w=300"},
+  {name:"ורד לבן",           desc:"נקי ואלגנטי",      price:"₪48 לזר", emoji:"🤍", tags:["romantic","white","classic","elegant"],          img:"https://images.pexels.com/photos/56866/garden-rose-red-pink-56866.jpeg?auto=compress&cs=tinysrgb&w=300"},
+  {name:"ורד שמנת",          desc:"רך ומושקע",        price:"₪52 לזר", emoji:"🌸", tags:["romantic","white","elegant","fragrant"],         img:"https://images.pexels.com/photos/5944919/pexels-photo-5944919.jpeg?auto=compress&cs=tinysrgb&w=300"},
+  {name:"ורד כתום",          desc:"נלהב ואנרגטי",     price:"₪46 לזר", emoji:"🧡", tags:["bold","orange","classic","cheerful"],            img:"https://images.pexels.com/photos/163696/pexels-photo-163696.jpeg?auto=compress&cs=tinysrgb&w=300"},
+  {name:"ורד צהוב",          desc:"ידידותי ואופטימי", price:"₪44 לזר", emoji:"🌼", tags:["cheerful","yellow","classic","bright"],          img:"https://images.pexels.com/photos/36729/tulip-flower-bloom-pink.jpg?auto=compress&cs=tinysrgb&w=300"},
+  {name:"פאוניה לבנה",      desc:"שלווה ומרשימה",    price:"₪70 לזר", emoji:"🤍", tags:["elegant","white","delicate","fragrant","luxury"],img:"https://images.pexels.com/photos/931177/pexels-photo-931177.jpeg?auto=compress&cs=tinysrgb&w=300&h=200&fit=crop"},
+  {name:"פאוניה אדומה",     desc:"סוערת ועוצמתית",   price:"₪72 לזר", emoji:"🌺", tags:["romantic","red","bold","fragrant","luxury"],     img:"https://images.pexels.com/photos/56866/garden-rose-red-pink-56866.jpeg?auto=compress&cs=tinysrgb&w=300&h=200&fit=crop"},
+  {name:"אמריליס אדום",     desc:"דרמטי ועוצמתי",    price:"₪75 לזר", emoji:"🌹", tags:["dramatic","bold","red","romantic","luxury"],     img:"https://images.pexels.com/photos/207518/pexels-photo-207518.jpeg?auto=compress&cs=tinysrgb&w=300"},
+  {name:"יסמין לבן",        desc:"ניחוח שמימי",       price:"₪55 לזר", emoji:"🤍", tags:["fragrant","delicate","white","calming","elegant"],img:"https://images.pexels.com/photos/931177/pexels-photo-931177.jpeg?auto=compress&cs=tinysrgb&w=300&h=220&fit=crop"},
+  {name:"ורד סגול",         desc:"מסתורי ומיוחד",    price:"₪59 לזר", emoji:"💜", tags:["exotic","purple","elegant","dramatic"],          img:"https://images.pexels.com/photos/931177/pexels-photo-931177.jpeg?auto=compress&cs=tinysrgb&w=300&h=250&fit=crop"},
+  {name:"אירוס סגול",       desc:"ייחודי ומרהיב",    price:"₪42 לזר", emoji:"💜", tags:["exotic","purple","elegant","dramatic"],          img:"https://images.pexels.com/photos/207518/pexels-photo-207518.jpeg?auto=compress&cs=tinysrgb&w=300"},
+  {name:"שושן הבקעות",      desc:"ניחוח קלאסי",       price:"₪38 לזר", emoji:"🤍", tags:["fragrant","white","delicate","classic"],         img:"https://images.pexels.com/photos/931177/pexels-photo-931177.jpeg?auto=compress&cs=tinysrgb&w=300"},
+  {name:"אגפנתוס כחול",     desc:"כחול ועמוק",        price:"₪60 לזר", emoji:"💙", tags:["exotic","purple","bold","dramatic"],             img:"https://images.pexels.com/photos/36729/tulip-flower-bloom-pink.jpg?auto=compress&cs=tinysrgb&w=300"},
+  {name:"לוונדר אנגלי",     desc:"ריח שדות",          price:"₪33 לזר", emoji:"💜", tags:["fragrant","purple","calming","delicate"],        img:"https://images.pexels.com/photos/56866/garden-rose-red-pink-56866.jpeg?auto=compress&cs=tinysrgb&w=300"},
+  {name:"מנטה פרחונית",     desc:"רענן ומרגיע",       price:"₪28 לזר", emoji:"🌿", tags:["calming","delicate","fragrant","white"],         img:"https://images.pexels.com/photos/56866/garden-rose-red-pink-56866.jpeg?auto=compress&cs=tinysrgb&w=300"},
+  {name:"חמנייה ענקית",     desc:"נוכחות מלאה",       price:"₪35 לזר", emoji:"🌻", tags:["cheerful","yellow","bold","bright"],             img:"https://images.pexels.com/photos/56866/garden-rose-red-pink-56866.jpeg?auto=compress&cs=tinysrgb&w=300"},
+  {name:"זזיניה צבעונית",   desc:"קיץ חגיגי",         price:"₪26 לזר", emoji:"🌺", tags:["cheerful","colorful","bold","bright"],           img:"https://images.pexels.com/photos/931177/pexels-photo-931177.jpeg?auto=compress&cs=tinysrgb&w=300&h=220&fit=crop"},
+  {name:"קוסמוס ורוד",      desc:"קל ואוורירי",       price:"₪24 לזר", emoji:"🌸", tags:["delicate","pink","cheerful","bright"],           img:"https://images.pexels.com/photos/5944919/pexels-photo-5944919.jpeg?auto=compress&cs=tinysrgb&w=300"},
+  {name:"טגטס כתום",        desc:"חם ומחמם",          price:"₪20 לזר", emoji:"🧡", tags:["cheerful","orange","bold","bright"],             img:"https://images.pexels.com/photos/163696/pexels-photo-163696.jpeg?auto=compress&cs=tinysrgb&w=300"},
+  {name:"ורד מיני צהוב",    desc:"מתוק ועליז",        price:"₪30 לזר", emoji:"🌼", tags:["cheerful","yellow","delicate","bright"],         img:"https://images.pexels.com/photos/56866/garden-rose-red-pink-56866.jpeg?auto=compress&cs=tinysrgb&w=300"},
+  {name:"אורכידאה לבנה",   desc:"פאר ולוקסוס",       price:"₪95 לזר", emoji:"🤍", tags:["luxury","elegant","white","exotic"],             img:"https://images.pexels.com/photos/931177/pexels-photo-931177.jpeg?auto=compress&cs=tinysrgb&w=300&h=250&fit=crop"},
+  {name:"אורכידאה ורודה",  desc:"מעוגן ונדיר",        price:"₪98 לזר", emoji:"🌸", tags:["luxury","elegant","pink","exotic"],              img:"https://images.pexels.com/photos/931177/pexels-photo-931177.jpeg?auto=compress&cs=tinysrgb&w=300&h=200&fit=crop"},
+  {name:"פרוטאה",           desc:"אקזוטי ועוצמתי",   price:"₪110 לזר",emoji:"🌺", tags:["exotic","dramatic","luxury","bold"],             img:"https://images.pexels.com/photos/56866/garden-rose-red-pink-56866.jpeg?auto=compress&cs=tinysrgb&w=300&h=200&fit=crop"},
+  {name:"הליקוניה",         desc:"טרופי ומרהיב",      price:"₪105 לזר",emoji:"🧡", tags:["exotic","orange","dramatic","luxury"],           img:"https://images.pexels.com/photos/207518/pexels-photo-207518.jpeg?auto=compress&cs=tinysrgb&w=300"},
+  {name:"ברומליה אדומה",    desc:"מיוחד במינו",       price:"₪88 לזר", emoji:"🌹", tags:["exotic","red","dramatic","luxury"],              img:"https://images.pexels.com/photos/56866/garden-rose-red-pink-56866.jpeg?auto=compress&cs=tinysrgb&w=300"},
+  {name:"צבעוני ורוד",      desc:"שמח ומרגש",         price:"₪27 לזר", emoji:"🌷", tags:["cheerful","pink","bright","delicate"],           img:"https://images.pexels.com/photos/36729/tulip-flower-bloom-pink.jpg?auto=compress&cs=tinysrgb&w=300"},
+  {name:"ליליום ורוד",      desc:"נשגב ומרשים",       price:"₪65 לזר", emoji:"🌸", tags:["elegant","pink","fragrant","bold"],              img:"https://images.pexels.com/photos/56866/garden-rose-red-pink-56866.jpeg?auto=compress&cs=tinysrgb&w=300"},
+  {name:"אסטרומריה ורודה", desc:"ארוך חיים",          price:"₪32 לזר", emoji:"🌸", tags:["delicate","pink","cheerful","elegant"],          img:"https://images.pexels.com/photos/5944919/pexels-photo-5944919.jpeg?auto=compress&cs=tinysrgb&w=300"},
+  {name:"קמליה ורודה",      desc:"רשמי ועשיר",        price:"₪78 לזר", emoji:"🌸", tags:["elegant","pink","luxury","classic"],             img:"https://images.pexels.com/photos/56866/garden-rose-red-pink-56866.jpeg?auto=compress&cs=tinysrgb&w=300"},
+  {name:"פלוקס ורוד",       desc:"קיצי ומשוחרר",      price:"₪23 לזר", emoji:"🌸", tags:["cheerful","pink","bright","delicate"],           img:"https://images.pexels.com/photos/931177/pexels-photo-931177.jpeg?auto=compress&cs=tinysrgb&w=300&h=220&fit=crop"},
+  {name:"שושנת המדבר",      desc:"עמיד ויפהפה",       price:"₪44 לזר", emoji:"🤍", tags:["delicate","white","elegant","calming"],          img:"https://images.pexels.com/photos/931177/pexels-photo-931177.jpeg?auto=compress&cs=tinysrgb&w=300&h=250&fit=crop"},
+  {name:"ורד שלג",          desc:"קר ונקי",            price:"₪50 לזר", emoji:"🤍", tags:["elegant","white","classic","fragrant"],          img:"https://images.pexels.com/photos/931177/pexels-photo-931177.jpeg?auto=compress&cs=tinysrgb&w=300"},
+  {name:"גרדניה",           desc:"ריח עז ויפה",        price:"₪62 לזר", emoji:"🤍", tags:["fragrant","white","elegant","luxury"],           img:"https://images.pexels.com/photos/931177/pexels-photo-931177.jpeg?auto=compress&cs=tinysrgb&w=300&h=200&fit=crop"},
+  {name:"מגנוליה לבנה",    desc:"עצמאי ומרשים",       price:"₪85 לזר", emoji:"🤍", tags:["luxury","white","dramatic","elegant"],           img:"https://images.pexels.com/photos/56866/garden-rose-red-pink-56866.jpeg?auto=compress&cs=tinysrgb&w=300&h=200&fit=crop"},
+  {name:"ספיראה לבן",       desc:"עדין כשלג",          price:"₪29 לזר", emoji:"🤍", tags:["delicate","white","calming","classic"],          img:"https://images.pexels.com/photos/56866/garden-rose-red-pink-56866.jpeg?auto=compress&cs=tinysrgb&w=300"},
+  {name:"פרסיה צהובה",      desc:"בוהק ומחמם",         price:"₪37 לזר", emoji:"🌼", tags:["bright","yellow","cheerful","bold"],             img:"https://images.pexels.com/photos/56866/garden-rose-red-pink-56866.jpeg?auto=compress&cs=tinysrgb&w=300"},
+  {name:"אכילאה צהובה",     desc:"שדה פרחים",          price:"₪25 לזר", emoji:"🌼", tags:["cheerful","yellow","bright","delicate"],         img:"https://images.pexels.com/photos/56866/garden-rose-red-pink-56866.jpeg?auto=compress&cs=tinysrgb&w=300"},
+  {name:"קרווה",            desc:"מסתורי ויפה",        price:"₪41 לזר", emoji:"🌼", tags:["exotic","yellow","dramatic","elegant"],          img:"https://images.pexels.com/photos/36729/tulip-flower-bloom-pink.jpg?auto=compress&cs=tinysrgb&w=300"},
+  {name:"דפנה צהובה",       desc:"עדין ועשיר",         price:"₪48 לזר", emoji:"🌼", tags:["fragrant","yellow","delicate","elegant"],        img:"https://images.pexels.com/photos/56866/garden-rose-red-pink-56866.jpeg?auto=compress&cs=tinysrgb&w=300"},
+  {name:"שמשון",            desc:"מזהיר וחיובי",       price:"₪33 לזר", emoji:"☀️", tags:["cheerful","yellow","bold","bright"],             img:"https://images.pexels.com/photos/163696/pexels-photo-163696.jpeg?auto=compress&cs=tinysrgb&w=300"},
+  {name:"דהליה שחורה",      desc:"מסתורי ועז",         price:"₪80 לזר", emoji:"🖤", tags:["dramatic","exotic","bold"],                      img:"https://images.pexels.com/photos/931177/pexels-photo-931177.jpeg?auto=compress&cs=tinysrgb&w=300&h=220&fit=crop"},
+  {name:"פרפר כחול",        desc:"נדיר ויפהפה",        price:"₪92 לזר", emoji:"💙", tags:["exotic","dramatic","luxury","bold"],             img:"https://images.pexels.com/photos/207518/pexels-photo-207518.jpeg?auto=compress&cs=tinysrgb&w=300"},
+  {name:"זנגביל פרחוני",   desc:"טרופי וחי",           price:"₪76 לזר", emoji:"🌺", tags:["exotic","colorful","dramatic","bold"],           img:"https://images.pexels.com/photos/56866/garden-rose-red-pink-56866.jpeg?auto=compress&cs=tinysrgb&w=300&h=200&fit=crop"},
+  {name:"ספת הגבעות",       desc:"פראי ועוצמתי",       price:"₪55 לזר", emoji:"🌿", tags:["dramatic","bold","calming","exotic"],            img:"https://images.pexels.com/photos/56866/garden-rose-red-pink-56866.jpeg?auto=compress&cs=tinysrgb&w=300"},
+  {name:"נרקיס כחול",       desc:"חלומי ורך",          price:"₪67 לזר", emoji:"💙", tags:["exotic","purple","elegant","delicate"],          img:"https://images.pexels.com/photos/931177/pexels-photo-931177.jpeg?auto=compress&cs=tinysrgb&w=300&h=250&fit=crop"},
+  {name:"אנמון אדום",       desc:"פראי וסוחף",         price:"₪38 לזר", emoji:"🌹", tags:["dramatic","red","bold","classic"],               img:"https://images.pexels.com/photos/56866/garden-rose-red-pink-56866.jpeg?auto=compress&cs=tinysrgb&w=300"},
+  {name:"רניקולוס ורוד",   desc:"מעוגל ועדין",         price:"₪43 לזר", emoji:"🌸", tags:["romantic","pink","delicate","elegant"],          img:"https://images.pexels.com/photos/5944919/pexels-photo-5944919.jpeg?auto=compress&cs=tinysrgb&w=300"},
+  {name:"לוטוס לבן",        desc:"רוחני ונדיר",        price:"₪120 לזר",emoji:"🪷", tags:["luxury","white","exotic","calming","elegant"],   img:"https://images.pexels.com/photos/931177/pexels-photo-931177.jpeg?auto=compress&cs=tinysrgb&w=300&h=200&fit=crop"},
+  {name:"כלנית אדומה",      desc:"ישראלי ואהוב",       price:"₪22 לזר", emoji:"🌹", tags:["classic","red","bright","cheerful"],             img:"https://images.pexels.com/photos/36729/tulip-flower-bloom-pink.jpg?auto=compress&cs=tinysrgb&w=300"},
+  {name:"נרקיס צהוב",       desc:"אביב ושמחה",         price:"₪28 לזר", emoji:"🌼", tags:["cheerful","yellow","bright","classic","fragrant"],img:"https://images.pexels.com/photos/56866/garden-rose-red-pink-56866.jpeg?auto=compress&cs=tinysrgb&w=300"},
+  {name:"כרכום סגול",       desc:"עדין ומשמח",         price:"₪31 לזר", emoji:"💜", tags:["delicate","purple","cheerful","calming"],        img:"https://images.pexels.com/photos/207518/pexels-photo-207518.jpeg?auto=compress&cs=tinysrgb&w=300"},
+  {name:"פרג אדום",         desc:"עז ומרגש",            price:"₪26 לזר", emoji:"🌹", tags:["dramatic","red","bold","bright"],                img:"https://images.pexels.com/photos/56866/garden-rose-red-pink-56866.jpeg?auto=compress&cs=tinysrgb&w=300&h=200&fit=crop"},
+  {name:"טיטוניה כתומה",   desc:"חם וכובש",            price:"₪34 לזר", emoji:"🧡", tags:["bold","orange","bright","cheerful"],             img:"https://images.pexels.com/photos/163696/pexels-photo-163696.jpeg?auto=compress&cs=tinysrgb&w=300"},
 ];
 
 const TAG_LABELS = {
@@ -1307,7 +1311,8 @@ function pwStrength(v, el) {
   if (/[A-Z]/.test(v)) score++;
   if (/[0-9]/.test(v)) score++;
   if (/[^A-Za-z0-9]/.test(v)) score++;
-  const labels = ['','חלשה','בינונית','טובה','חזקה ✓'];
+  if (!/[A-Z]/.test(v) || !/[a-z]/.test(v) || !/[0-9]/.test(v)) score = Math.min(score, 2);
+  const labels = ['','חלשה ✗','בינונית','טובה','חזקה ✓'];
   const colors = ['','#e9697a','#e8a84a','#7a9e7e','#4a9e7a'];
   el.textContent = score ? 'חוזק סיסמה: ' + (labels[score]||'') : '';
   el.style.color = colors[score] || '#bbb';
@@ -1335,20 +1340,49 @@ async function handleSignup() {
   const pw     = document.getElementById('password').value;
   const pw2    = document.getElementById('password2').value;
 
-  if (!fname || !lname) { alert('נא למלא שם פרטי ושם משפחה'); return; }
+  // Name: letters only (Hebrew/English)
+  const nameRe = /^[\u0590-\u05FFa-zA-Z\s\-']{2,50}$/;
+  if (!nameRe.test(fname)) { alert('שם פרטי חייב להכיל אותיות בלבד (2-50 תווים)'); return; }
+  if (!nameRe.test(lname)) { alert('שם משפחה חייב להכיל אותיות בלבד (2-50 תווים)'); return; }
+
+  // DOB
   if (!dob) { alert('נא לבחור תאריך לידה'); return; }
+  const dobYear = new Date(dob).getFullYear();
+  if (dobYear < 1900) { alert('תאריך לידה לא תקין'); return; }
   const age = (new Date() - new Date(dob)) / (1000*60*60*24*365.25);
   if (age < 18) { alert('יש להיות מעל גיל 18 להצטרפות'); return; }
-  if (!email || !email.includes('@')) { alert('נא להזין כתובת מייל תקינה'); return; }
-  if (!street || !city) { alert('נא למלא כתובת מגורים מלאה'); return; }
+
+  // Email
+  const emailRe = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
+  if (!emailRe.test(email)) { alert('כתובת מייל אינה תקינה'); return; }
+
+  // Street
+  if (street.length < 2) { alert('נא למלא כתובת רחוב'); return; }
+  if (/[<>{}]/.test(street)) { alert('כתובת רחוב מכילה תווים לא חוקיים'); return; }
+
+  // City: letters only, no numbers
+  const cityRe = /^[\u0590-\u05FFa-zA-Z\s\-']{2,50}$/;
+  if (!cityRe.test(city)) { alert('שם עיר חייב להכיל אותיות בלבד — ללא מספרים'); return; }
+
+  // ZIP: 5 or 7 digits only (optional)
+  if (zip && !/^\d{5}(\d{2})?$/.test(zip.replace(/\s/g,''))) {
+    alert('מיקוד חייב להכיל 5 או 7 ספרות בלבד'); return;
+  }
+
+  // Password strength
   if (pw.length < 8) { alert('הסיסמה חייבת להכיל לפחות 8 תווים'); return; }
+  if (pw.length > 128) { alert('הסיסמה ארוכה מדי (מקסימום 128 תווים)'); return; }
+  if (!/[A-Z]/.test(pw)) { alert('הסיסמה חייבת להכיל לפחות אות גדולה אחת באנגלית'); return; }
+  if (!/[a-z]/.test(pw)) { alert('הסיסמה חייבת להכיל לפחות אות קטנה אחת באנגלית'); return; }
+  if (!/[0-9]/.test(pw)) { alert('הסיסמה חייבת להכיל לפחות ספרה אחת'); return; }
   if (pw !== pw2) { alert('הסיסמאות אינן תואמות'); return; }
 
   const btn = document.querySelector('#signup-form .btn-signup');
   btn.textContent = 'נרשם...'; btn.disabled = true;
 
   const { ok, status, data } = await apiFetch('/api/register', {
-    fname, lname, dob, email, street, city, zip, password: pw
+    fname, lname, dob, email, street, city, zip, password: pw,
+    website: document.getElementById('signup-honeypot').value // honeypot
   });
 
   btn.textContent = '✦ הצטרף עכשיו'; btn.disabled = false;
