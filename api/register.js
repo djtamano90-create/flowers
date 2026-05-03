@@ -1,5 +1,10 @@
 import bcrypt from 'bcryptjs';
-import { redis, setCors, rateLimit, getIp, sanitize, isValidEmail, isValidPassword } from './_security.js';
+import {
+  redis, setCors, rateLimit, getIp,
+  sanitize, isValidEmail, isValidPassword, isStrongPassword,
+  isValidName, isValidCity, isValidZip, isValidStreet, isValidDob,
+  isBotRequest
+} from './_security.js';
 
 export default async function handler(req, res) {
   setCors(res);
@@ -8,10 +13,15 @@ export default async function handler(req, res) {
 
   const ip = getIp(req);
 
-  // Rate limit: max 5 registrations per IP per hour
+  // Rate limit: 5 registrations per IP per hour
   const blocked = await rateLimit(`rl:register:${ip}`, 5, 3600);
   if (blocked) {
     return res.status(429).json({ error: 'יותר מדי ניסיונות — נסה שוב עוד שעה' });
+  }
+
+  // Honeypot anti-bot check
+  if (isBotRequest(req.body)) {
+    return res.status(200).json({ ok: true }); // silently ignore bots
   }
 
   // Sanitize inputs
@@ -21,29 +31,36 @@ export default async function handler(req, res) {
   const email    = sanitize(req.body?.email, 254).toLowerCase();
   const street   = sanitize(req.body?.street, 100);
   const city     = sanitize(req.body?.city, 50);
-  const zip      = sanitize(req.body?.zip, 10);
+  const zip      = sanitize(req.body?.zip, 10).replace(/\s/g, '');
   const password = req.body?.password;
 
-  // Validate required fields
-  if (!fname || !lname || !dob || !email || !street || !city || !password) {
-    return res.status(400).json({ error: 'נא למלא את כל השדות' });
-  }
-  if (!isValidEmail(email)) {
-    return res.status(400).json({ error: 'כתובת מייל אינה תקינה' });
-  }
-  if (!isValidPassword(password)) {
-    return res.status(400).json({ error: 'הסיסמה חייבת להכיל בין 8 ל-128 תווים' });
-  }
+  // Validate each field individually with clear error messages
+  if (!isValidName(fname))
+    return res.status(400).json({ error: 'שם פרטי חייב להכיל אותיות בלבד (2-50 תווים)' });
 
-  // Validate DOB
-  const dobDate = new Date(dob);
-  if (isNaN(dobDate.getTime())) {
-    return res.status(400).json({ error: 'תאריך לידה אינו תקין' });
-  }
-  const age = (Date.now() - dobDate.getTime()) / (1000 * 60 * 60 * 24 * 365.25);
-  if (age < 18) {
-    return res.status(400).json({ error: 'יש להיות מעל גיל 18' });
-  }
+  if (!isValidName(lname))
+    return res.status(400).json({ error: 'שם משפחה חייב להכיל אותיות בלבד (2-50 תווים)' });
+
+  if (!isValidDob(dob))
+    return res.status(400).json({ error: 'תאריך לידה לא תקין — יש להיות מעל גיל 18' });
+
+  if (!isValidEmail(email))
+    return res.status(400).json({ error: 'כתובת מייל אינה תקינה' });
+
+  if (!isValidStreet(street))
+    return res.status(400).json({ error: 'כתובת רחוב לא תקינה' });
+
+  if (!isValidCity(city))
+    return res.status(400).json({ error: 'שם עיר חייב להכיל אותיות בלבד (לא מספרים)' });
+
+  if (!isValidZip(zip))
+    return res.status(400).json({ error: 'מיקוד חייב להכיל 5 או 7 ספרות בלבד' });
+
+  if (!isValidPassword(password))
+    return res.status(400).json({ error: 'הסיסמה חייבת להכיל בין 8 ל-128 תווים' });
+
+  if (!isStrongPassword(password))
+    return res.status(400).json({ error: 'הסיסמה חייבת לכלול אות גדולה, אות קטנה ומספר' });
 
   // Check duplicate email
   const emailKey = `user:${email}`;
@@ -52,11 +69,15 @@ export default async function handler(req, res) {
     return res.status(409).json({ error: 'כתובת המייל כבר רשומה במערכת' });
   }
 
-  // Hash password with bcrypt (cost factor 12)
+  // Hash password with bcrypt
   const pwHash = await bcrypt.hash(password, 12);
 
-  const user = { fname, lname, dob, email, street, city, zip, pwHash, createdAt: new Date().toISOString() };
-  await redis.set(emailKey, JSON.stringify(user));
+  const user = {
+    fname, lname, dob, email, street, city, zip,
+    pwHash,
+    createdAt: new Date().toISOString()
+  };
 
+  await redis.set(emailKey, JSON.stringify(user));
   return res.status(200).json({ ok: true, fname });
 }
